@@ -6,7 +6,7 @@
 #include <string>
 #include <unordered_map>
 
-#define USER_AGENT "NetCpp/1.0.0"
+#define POWERED_BY "NetCpp/1.0.0"
 
 class HttpResponse {
 public:

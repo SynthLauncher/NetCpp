@@ -3,8 +3,11 @@ project('NetCpp', 'cpp', license: 'MIT', version: '1.0.0', license_files: 'LICEN
 
 src = [
   'src/core/request.cc',
+  'src/core/response.cc',
   'src/utils/http_version.cc',
-  'src/utils/method.cc'
+  'src/utils/method.cc',
+  'src/utils/status.cc',
+  'src/utils/parse_headers.cc'
 ]
 
 test_src = [

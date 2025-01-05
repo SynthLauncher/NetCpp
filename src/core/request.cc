@@ -1,4 +1,5 @@
 #include "../../include/core/request.hh"
+#include "include/utils/parse_headers.hh"
 #include <vector>
 
 HttpRequest::HttpRequest() {}
@@ -27,27 +28,10 @@ HttpRequest::HttpRequest(std::string request) {
 
   request.erase(request.begin(), request.begin() + pos + 1);
 
-  std::vector<std::string> header;
-  ss.clear();
-
   pos = request.find("\r\n\r\n");
 
-  for (int i = 0; i < pos + 2; ++i) {
-    if (request[i] == ':' && request[i + 1] == ' ') {
-      header.push_back(ss);
-      ss.clear();
-    } else if (request[i] == '\r' && request[i + 1] == '\n') {
-      header.push_back(ss);
-      ss.clear();
-
-     headers[header[0]] = header[1];
-      header.clear();
-      ++i;
-    } else if (request[i] == ' ' && request[i - 1] == ':') {
-    } else {
-      ss.push_back(request[i]);
-    }
-  }
+  headers =
+      parseHeader(std::string(request.begin(), request.begin() + pos + 2));
 
   body = std::string(request.begin() + pos + 4, request.end());
 }
