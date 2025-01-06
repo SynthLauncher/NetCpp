@@ -1,8 +1,8 @@
 #ifndef NETCPP_CORE_REQUEST_HH
 #define NETCPP_CORE_REQUEST_HH
 
-#include "../utils/http_version.hh"
-#include "../utils/method.hh"
+#include "include/utils/http_version.hh"
+#include "include/utils/method.hh"
 #include <string>
 #include <unordered_map>
 
