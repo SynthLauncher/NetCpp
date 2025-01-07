@@ -1,7 +1,6 @@
-#include "../include/windows/descriptor.hh"
+#include "../../include/windows/descriptor.hh"
 
-int main() 
-{
+int main() {
     createSocketServer("0.0.0.0", "8080");
 
     return 0;
