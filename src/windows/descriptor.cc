@@ -1,6 +1,6 @@
-#include "../../include/windows/descriptor.hh"
+#include "include/windows/descriptor.hh"
 
-int createSocketServer(const std::string address, const std::string port) {
+int createSocketServer(const std::string& address, const std::string& port) {
     /*
         WSADATA provides information about the Windows Sockets implementation, such as:
 
@@ -49,7 +49,7 @@ int createSocketServer(const std::string address, const std::string port) {
 
     hints.ai_family = AF_INET; // IPv4
     hints.ai_socktype = SOCK_STREAM; // Stream-oriented (TCP)
-    hints.ai_flags = AI_PASSIVE; // Usees local address
+    hints.ai_flags = AI_PASSIVE; // Uses local address
     hints.ai_protocol = IPPROTO_TCP; // Sets explicitly to TCP
 
 
