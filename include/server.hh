@@ -3,7 +3,10 @@
 
 #include "include/posix/descriptor.hh"
 #include <string>
+
+#if defined(__linux__)
 #include <sys/epoll.h>
+#endif
 
 class Server {
 public:
