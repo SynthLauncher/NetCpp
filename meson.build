@@ -7,7 +7,9 @@ src = [
   'src/utils/http_version.cc',
   'src/utils/method.cc',
   'src/utils/status.cc',
-  'src/utils/parse_headers.cc'
+  'src/utils/parse_headers.cc',
+  'src/posix/descriptor.cc',
+  'src/server.cc'
 ]
 
 test_src = [

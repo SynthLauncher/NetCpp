@@ -12,6 +12,7 @@
 #include <sys/socket.h>
 
 #define MAX_EVENT 15
+#define MAX_BUFFER 2048
 
 int createSocketServer(const std::string &address, const unsigned int port);
 
