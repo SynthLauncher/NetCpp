@@ -19,6 +19,7 @@ int createSocketServer(const std::string &address, const unsigned int port);
 void setNonBlocking(int fd);
 
 int createEpoll(int serverFd);
+
 #endif // OS Condition
 
 #endif // NETCPP_POSIX_DESCRIPTOR_HH
