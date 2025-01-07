@@ -3,6 +3,7 @@
 Server::Server(const std::string address, const unsigned int port)
     : address_(address), port_{port} {}
 
+#if defined(__linux__)
 void Server::runWithLinux() {
   serverFd = createSocketServer(address_, port_);
   epollFd = createEpoll(serverFd);
@@ -29,3 +30,4 @@ void Server::runWithLinux() {
     }
   }
 }
+#endif
