@@ -11,23 +11,24 @@
 class Server {
 public:
   Server(const std::string address, const unsigned int port);
+  
   inline void run() {
-#if defined(__linux__)
-    runWithLinux();
-#endif
+    #if defined(__linux__)
+        runWithLinux();
+    #endif
   }
 
 private:
   std::string address_;
   unsigned int port_;
 
-#if defined(__linux__)
-  int serverFd;
-  int epollFd;
-  epoll_event events[MAX_EVENT];
+  #if defined(__linux__)
+    int serverFd;
+    int epollFd;
+    epoll_event events[MAX_EVENT];
 
-  void runWithLinux();
-#endif
+    void runWithLinux();
+  #endif
 };
 
 #endif // NETCPP_SERVER_HH
