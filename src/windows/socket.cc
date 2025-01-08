@@ -13,7 +13,7 @@ int createSocketServer(const std::string& address, const std::string& port) {
     // iResult is often used to store the return values of various functions, primary used to check whether a Winsock function call has succeeded or failed.
     int iResult;
 
-    SOCKET ListenSocket = INVALID_SOCKET;
+    SOCKET server = INVALID_SOCKET;
 
     /*
         addrinfo is a structure used in Winsock and POSIX systems to represent address information for network connection setup. I
@@ -69,9 +69,9 @@ int createSocketServer(const std::string& address, const std::string& port) {
     }
 
     // Creates a SOCKET for the server to listen for client connections.
-    ListenSocket = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
+    server = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
 
-    if (ListenSocket == INVALID_SOCKET) 
+    if (server == INVALID_SOCKET) 
     {
         printf("socket failed with error: %ld\n", WSAGetLastError());
         
@@ -82,14 +82,14 @@ int createSocketServer(const std::string& address, const std::string& port) {
     }
 
     // Setups the TCP listening socket
-    iResult = bind(ListenSocket, result->ai_addr, (int)result->ai_addrlen);
+    iResult = bind(server, result->ai_addr, (int)result->ai_addrlen);
 
     if (iResult == SOCKET_ERROR) 
     {
         printf("bind failed with error: %d\n", WSAGetLastError());
 
         freeaddrinfo(result);
-        closesocket(ListenSocket);
+        closesocket(server);
         WSACleanup();
 
         return 1;
@@ -100,17 +100,17 @@ int createSocketServer(const std::string& address, const std::string& port) {
     /*
         SOMAXCONN = 0x7fffffff
     */
-    iResult = listen(ListenSocket, SOMAXCONN);
+    iResult = listen(server, SOMAXCONN);
     
     if (iResult == SOCKET_ERROR) 
     {
         printf("listen failed with error: %d\n", WSAGetLastError());
         
-        closesocket(ListenSocket);
+        closesocket(server);
         WSACleanup();
 
         return 1;
     }
 
-    return ListenSocket;
+    return server;
 }
