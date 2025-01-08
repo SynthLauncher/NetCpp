@@ -12,7 +12,6 @@
 class ServerHandler {
 public:
   ServerHandler();
-  virtual void onTcpHandshake() = 0;
   virtual void onRequest() = 0;
 };
 
