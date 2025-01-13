@@ -1,17 +1,17 @@
-#ifndef NETCPP_CORE_RESPONSE_HH
-#define NETCPP_CORE_RESPONSE_HH
+#ifndef NETCPP_HTTP1_RESPONSE_HH
+#define NETCPP_HTTP1_RESPONSE_HH
 
 #include "include/utils/http_version.hh"
+#include "include/utils/parse_headers.hh"
 #include "include/utils/status.hh"
 #include <string>
 #include <unordered_map>
+#include <vector>
 
-#define POWERED_BY "NetCpp/1.0.0"
-
-class HttpResponse {
+class Http1Response {
 public:
-  HttpResponse();
-  HttpResponse(std::string response);
+  Http1Response();
+  Http1Response(std::string response);
 
   std::string url;
   HttpVersion version;
@@ -20,4 +20,4 @@ public:
   std::string body;
 };
 
-#endif // NETCPP_CORE_RESPONSE_HH
+#endif // NETCPP_HTTP1_RESPONSE_HH

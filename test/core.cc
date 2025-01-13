@@ -1,17 +1,17 @@
-#include "include/request.hh"
-#include "include/response.hh"
+#include "include/http1/request.hh"
+#include "include/http1/response.hh"
 #include "include/utils/http_version.hh"
 #include "include/utils/method.hh"
 #include <gtest/gtest.h>
 #include <string>
 
-TEST(CoreTest, RequestTest) {
+TEST(Http1Test, RequestTest) {
   std::string request =
       "POST /submit-form HTTP/1.1\r\nHost: www.example.com\r\nContent-Type: "
       "application/x-www-form-urlencoded\r\nContent-Length: "
       "27\r\n\r\nname=JohnDoe&age=30&city=Paris";
 
-  HttpRequest req(request);
+  Http1Request req(request);
 
   ASSERT_EQ(req.method, Method::POST);
   ASSERT_EQ(req.uri, "/submit-form");
@@ -23,14 +23,14 @@ TEST(CoreTest, RequestTest) {
   ASSERT_EQ(req.headers["Content-Length"], "27");
 }
 
-TEST(CoreTest, ResponseTest) {
+TEST(Http1Test, ResponseTest) {
   std::string response =
       "HTTP/1.1 200 OK\r\nDate: Sat, 05 Jan 2025 12:00:00 GMT\r\nServer: "
       "Apache/2.4.41 (Ubuntu)\r\nContent-Type: text/html; "
       "charset=UTF-8\r\nContent-Length: 13\r\nConnection: close\r\n\r\nHello, "
       "world!";
 
-  HttpResponse res(response);
+  Http1Response res(response);
 
   ASSERT_EQ(res.version, HttpVersion::HTTP1);
   ASSERT_EQ(res.status, Status::Ok);

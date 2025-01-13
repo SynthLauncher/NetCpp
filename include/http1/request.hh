@@ -1,17 +1,17 @@
-#ifndef NETCPP_CORE_REQUEST_HH
-#define NETCPP_CORE_REQUEST_HH
+#ifndef NETCPP_HTTP1_REQUEST_HH
+#define NETCPP_HTTP1_REQUEST_HH
 
 #include "include/utils/http_version.hh"
 #include "include/utils/method.hh"
+#include "include/utils/parse_headers.hh"
 #include <string>
 #include <unordered_map>
+#include <vector>
 
-#define USER_AGENT "NetCpp/1.0.0"
-
-class HttpRequest {
+class Http1Request {
 public:
-  HttpRequest();
-  HttpRequest(std::string request);
+  Http1Request();
+  Http1Request(std::string request);
 
   std::string url;
   Method method;
@@ -21,4 +21,4 @@ public:
   std::string body;
 };
 
-#endif // NETCPP_CORE_REQUEST_HH
+#endif // NETCPP_HTTP1_REQUEST_HH

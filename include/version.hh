@@ -1,0 +1,10 @@
+#ifndef NETCPP_VERSION_HH
+#define NETCPP_VERSION_HH
+
+#define MAJOR_VERSION 1
+#define MINOR_VERSION 0
+#define PATCH_VERSION 0
+
+#define USER_AGENT_X_POWERED_BY "NetCpp/1.0.0"
+
+#endif // NETCPP_VERSION_HH

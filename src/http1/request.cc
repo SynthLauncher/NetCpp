@@ -1,10 +1,8 @@
-#include "include/request.hh"
-#include "include/utils/parse_headers.hh"
-#include <vector>
+#include "include/http1/request.hh"
 
-HttpRequest::HttpRequest() {}
+Http1Request::Http1Request() {}
 
-HttpRequest::HttpRequest(std::string request) {
+Http1Request::Http1Request(std::string request) {
   std::vector<std::string> methods;
   std::string ss;
 

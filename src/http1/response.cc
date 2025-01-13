@@ -1,13 +1,8 @@
-#include "include/response.hh"
-#include "include/utils/http_version.hh"
-#include "include/utils/parse_headers.hh"
-#include "include/utils/status.hh"
-#include <string>
-#include <vector>
+#include "include/http1/response.hh"
 
-HttpResponse::HttpResponse() {}
+Http1Response::Http1Response() {}
 
-HttpResponse::HttpResponse(std::string response) {
+Http1Response::Http1Response(std::string response) {
   std::vector<std::string> methods;
   std::string ss;
 

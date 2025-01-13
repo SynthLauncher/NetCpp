@@ -2,8 +2,10 @@ project('NetCpp', 'cpp', license: 'MIT', version: '1.0.0', license_files: 'LICEN
 
 
 src = [
-  'src/request.cc',
-  'src/response.cc',
+  'src/http1/request.cc',
+  'src/http1/response.cc',
+  'src/http2/request.cc',
+  'src/http2/response.cc',
   'src/utils/http_version.cc',
   'src/utils/method.cc',
   'src/utils/status.cc',
