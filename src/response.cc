@@ -1,4 +1,4 @@
-#include "include/core/response.hh"
+#include "include/response.hh"
 #include "include/utils/http_version.hh"
 #include "include/utils/parse_headers.hh"
 #include "include/utils/status.hh"

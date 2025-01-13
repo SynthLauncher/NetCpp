@@ -1,5 +1,5 @@
-#include "include/core/request.hh"
-#include "include/core/response.hh"
+#include "include/request.hh"
+#include "include/response.hh"
 #include "include/utils/http_version.hh"
 #include "include/utils/method.hh"
 #include <gtest/gtest.h>
