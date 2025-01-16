@@ -11,6 +11,10 @@
 
 using bit = bool;
 
+inline int calcPadding(size_t payloadLength) {
+  return (8 - (payloadLength % 8)) % 8;
+}
+
 struct Frame {
   uint24 length;
 
@@ -142,6 +146,13 @@ struct WindowUpdateFrame : public Frame {
   std::array<bit, 31> windowSizeIncrement;
 
   WindowUpdateFrame(std::vector<bit> bits);
+};
+
+struct ContinuationFrame : public Frame {
+  const uint8_t type = 0x09;
+  const std::array<bit, 5> unusedFlag = {0, 0, 0, 0, 0};
+
+  std::vector<bit> fieldBlockFragment;
 };
 
 #endif // NETCPP_HTTP2_FRAMES_HH
