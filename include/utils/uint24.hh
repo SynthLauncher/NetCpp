@@ -4,6 +4,7 @@
 struct uint24 {
   unsigned int data : 24;
 
+  uint24() {}
   uint24(unsigned int data) : data{data} {}
 } __attribute__((packed));
 
