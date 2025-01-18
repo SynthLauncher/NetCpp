@@ -72,8 +72,8 @@ struct PriorityFrame {
   uint32_t streamIdentifier;
 
   bit exclusive;
-  std::array<bit, 31> streamDependency;
-  std::array<bit, 8> weight;
+  uint32_t streamDependency;
+  uint8_t weight;
 
   PriorityFrame(const std::vector<bit> &bits);
 };
