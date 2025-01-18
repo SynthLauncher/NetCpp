@@ -129,7 +129,7 @@ struct PushPromiseFrame {
 
   uint8_t padLength;
   const bit reserved2 = 0;
-  std::array<bit, 31> promiseStreamId;
+  uint32_t promiseStreamId;
   std::vector<bit> fieldBlockFragment;
   std::vector<uint8_t> padding;
 

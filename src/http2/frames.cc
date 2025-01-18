@@ -108,3 +108,35 @@ SettingFrame::SettingFrame(const std::vector<bit> &bits) {
     settings.push_back(Setting(identifier, value));
   }
 }
+
+PushPromiseFrame::PushPromiseFrame(const std::vector<bit> &bits) {
+  length = calcSize<uint24>(std::vector<bit>(bits.begin(), bits.begin() + 24));
+
+  paddedFlag = bits[36];
+  endHeaderFlag = bits[37];
+
+  streamIdentifier = calcSize<uint32_t>(
+      std::vector<bit>(bits.begin() + 41, bits.begin() + 72));
+
+  size_t index = 73;
+
+  if (paddedFlag) {
+    padLength = calcSize<uint8_t>(
+        std::vector<bit>(bits.begin() + index, bits.begin() + index + 8));
+    padding = std::vector<uint8_t>(padLength, 0);
+    index += 9;
+  }
+
+  ++index;
+
+  promiseStreamId = calcSize<uint32_t>(
+      std::vector<bit>(bits.begin() + index, bits.begin() + index + 31));
+  index += 31;
+
+  if (paddedFlag) {
+    fieldBlockFragment =
+        std::vector<bit>(bits.begin() + index, bits.end() - padLength);
+  } else {
+    fieldBlockFragment = std::vector<bit>(bits.begin() + index, bits.end());
+  }
+}
