@@ -15,6 +15,9 @@ inline int calcPadding(size_t payloadLength) {
   return (8 - (payloadLength % 8)) % 8;
 }
 
+template <typename T>
+T calcSize(const std::vector<bit> &bits);
+
 struct DataFrame {
   uint24 length;
   const uint8_t type = 0x00;
@@ -27,11 +30,11 @@ struct DataFrame {
   const bit reserved = 0;
   uint32_t streamIdentifier;
 
-  std::array<bit, 8> padLength;
+  uint8_t padLength;
   std::vector<bit> data;
-  std::vector<bit> padding;
+  std::vector<uint8_t> padding;
 
-  DataFrame(std::vector<bit> bits);
+  DataFrame(const std::vector<bit> &bits);
 };
 
 struct HeaderFrame {
@@ -49,14 +52,14 @@ struct HeaderFrame {
   const bit reserved = 0;
   uint32_t streamIdentifier;
 
-  std::array<bit, 8> padLength;
+  uint8_t padLength;
   bit exclusive;
-  std::array<bit, 31> streamDependency;
-  std::array<bit, 8> weight;
+  uint32_t streamDependency;
+  uint8_t weight;
   std::vector<bit> fieldBlockFragment;
-  std::vector<bit> padding;
+  std::vector<uint8_t> padding;
 
-  HeaderFrame(std::vector<bit> bits);
+  HeaderFrame(const std::vector<bit> &bits);
 };
 
 struct PriorityFrame {
@@ -72,7 +75,7 @@ struct PriorityFrame {
   std::array<bit, 31> streamDependency;
   std::array<bit, 8> weight;
 
-  PriorityFrame(std::vector<bit> bits);
+  PriorityFrame(const std::vector<bit> &bits);
 };
 
 struct RstStreamFrame {
@@ -86,7 +89,7 @@ struct RstStreamFrame {
 
   std::array<bit, 32> errorCode;
 
-  RstStreamFrame(std::vector<bit> bits);
+  RstStreamFrame(const std::vector<bit> &bits);
 };
 
 struct Setting {
@@ -106,7 +109,7 @@ struct SettingFrame {
 
   std::vector<Setting> settings;
 
-  SettingFrame(std::vector<bit> bits);
+  SettingFrame(const std::vector<bit> &bits);
 };
 
 struct PushPromiseFrame {
@@ -121,13 +124,13 @@ struct PushPromiseFrame {
   const bit reserved = 0;
   uint32_t streamIdentifier;
 
-  std::array<bit, 8> padLength;
+  uint8_t padLength;
   const bit reserved2 = 0;
   std::array<bit, 31> promiseStreamId;
   std::vector<bit> fieldBlockFragment;
-  std::vector<bit> padding;
+  std::vector<uint8_t> padding;
 
-  PushPromiseFrame(std::vector<bit> bits);
+  PushPromiseFrame(const std::vector<bit> &bits);
 };
 
 struct PingFrame {
@@ -142,7 +145,7 @@ struct PingFrame {
 
   std::array<bit, 64> opaqueData;
 
-  PingFrame(std::vector<bit> bits);
+  PingFrame(const std::vector<bit> &bits);
 };
 
 struct GoawayFrame {
@@ -159,7 +162,7 @@ struct GoawayFrame {
   const bit reserved = 0;
   uint32_t streamIdentifier;
 
-  GoawayFrame(std::vector<bit> bits);
+  GoawayFrame(const std::vector<bit> &bits);
 };
 
 struct WindowUpdateFrame {
@@ -174,7 +177,7 @@ struct WindowUpdateFrame {
   const bit reserved2 = 0;
   std::array<bit, 31> windowSizeIncrement;
 
-  WindowUpdateFrame(std::vector<bit> bits);
+  WindowUpdateFrame(const std::vector<bit> &bits);
 };
 
 struct ContinuationFrame {
