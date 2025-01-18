@@ -28,7 +28,7 @@ DataFrame::DataFrame(const std::vector<bit> &bits) {
     padLength = calcSize<uint8_t>(
         std::vector<bit>(bits.begin() + 73, bits.begin() + 81));
     data = std::vector<bit>(bits.begin() + 82, bits.end() - padLength);
-    padding = std::vector<uint8_t>(bits.end() - padLength, bits.end());
+    padding = std::vector<uint8_t>(padLength, 0);
   } else {
     data = std::vector<bit>(bits.begin() + 73, bits.end());
   }
@@ -50,7 +50,7 @@ HeaderFrame::HeaderFrame(const std::vector<bit> &bits) {
   if (paddedFlag) {
     padLength = calcSize<uint8_t>(
         std::vector<bit>(bits.begin() + index, bits.begin() + index + 8));
-    padding = std::vector<uint8_t>(bits.end() - padLength, bits.end());
+    padding = std::vector<uint8_t>(padLength, 0);
     index += 9;
   }
 
