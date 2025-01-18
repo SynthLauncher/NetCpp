@@ -75,8 +75,17 @@ HeaderFrame::HeaderFrame(const std::vector<bit> &bits) {
 PriorityFrame::PriorityFrame(const std::vector<bit> &bits) {
   streamIdentifier = calcSize<uint32_t>(
       std::vector<bit>(bits.begin() + 41, bits.begin() + 72));
+
   exclusive = bits[73];
   streamDependency = calcSize<uint32_t>(
       std::vector<bit>(bits.begin() + 74, bits.begin() + 105));
+
   weight = calcSize<uint8_t>(std::vector<bit>(bits.begin() + 106, bits.end()));
+}
+
+RstStreamFrame::RstStreamFrame(const std::vector<bit> &bits) {
+  streamIdentifier = calcSize<uint32_t>(
+      std::vector<bit>(bits.begin() + 41, bits.begin() + 72));
+
+  errorCode = calcSize<uint32_t>(std::vector<bit>(bits.end() - 32, bits.end()));
 }

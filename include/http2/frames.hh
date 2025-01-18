@@ -87,7 +87,7 @@ struct RstStreamFrame {
   const bit reserved = 0;
   uint32_t streamIdentifier;
 
-  std::array<bit, 32> errorCode;
+  uint32_t errorCode;
 
   RstStreamFrame(const std::vector<bit> &bits);
 };
