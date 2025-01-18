@@ -89,3 +89,22 @@ RstStreamFrame::RstStreamFrame(const std::vector<bit> &bits) {
 
   errorCode = calcSize<uint32_t>(std::vector<bit>(bits.end() - 32, bits.end()));
 }
+
+SettingFrame::SettingFrame(const std::vector<bit> &bits) {
+  length = calcSize<uint24>(std::vector<bit>(bits.begin(), bits.begin() + 24));
+
+  ackFlag = bits[39];
+
+  size_t boucleTour = (bits.end() - (bits.begin() + 73)) / 48;
+  size_t begin = 73;
+
+  for (size_t i = 0; i < boucleTour; ++i) {
+    begin += i * 48;
+    uint16_t identifier = calcSize<uint16_t>(
+        std::vector<bit>(bits.begin() + begin, bits.begin() + begin + 16));
+    uint32_t value = calcSize<uint32_t>(
+        std::vector<bit>(bits.begin() + begin + 16, bits.begin() + 48));
+
+    settings.push_back(Setting(identifier, value));
+  }
+}

@@ -93,8 +93,11 @@ struct RstStreamFrame {
 };
 
 struct Setting {
-  std::array<bit, 16> identifier;
-  std::array<bit, 32> value;
+  uint16_t identifier;
+  uint32_t value;
+
+  Setting(uint16_t identifier, uint32_t value)
+      : identifier{identifier}, value{value} {}
 };
 
 struct SettingFrame {
@@ -105,7 +108,7 @@ struct SettingFrame {
   bit ackFlag;
 
   const bit reserved = 0;
-  uint32_t streamIdentifier;
+  const uint32_t streamIdentifier = 0;
 
   std::vector<Setting> settings;
 
