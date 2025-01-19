@@ -1,6 +1,4 @@
 #include "include/http2/frames.hh"
-#include <cmath>
-#include <cstdint>
 
 template <typename T>
 T calcSize(const std::vector<bit> &bits) {

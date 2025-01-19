@@ -1,8 +1,9 @@
 #ifndef NETCPP_HTTP2_FRAMES_HH
 #define NETCPP_HTTP2_FRAMES_HH
 
-#include "utils/uint24.hh"
+#include "include/utils/uint24.hh"
 #include <array>
+#include <cmath>
 #include <cstdint>
 #include <vector>
 
