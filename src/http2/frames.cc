@@ -157,3 +157,11 @@ GoawayFrame::GoawayFrame(const std::vector<bit> &bits) {
       std::vector<bit>(bits.begin() + 105, bits.begin() + 137));
   additionalDebugData = std::vector<bit>(bits.begin() + 137, bits.end());
 }
+
+WindowUpdateFrame::WindowUpdateFrame(const std::vector<bit> &bits) {
+  streamIdentifier = calcSize<uint32_t>(
+      std::vector<bit>(bits.begin() + 41, bits.begin() + 72));
+
+  windowSizeIncrement =
+      calcSize<uint32_t>(std::vector<bit>(bits.end() - 32, bits.end()));
+}

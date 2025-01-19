@@ -178,7 +178,7 @@ struct WindowUpdateFrame {
   uint32_t streamIdentifier;
 
   const bit reserved2 = 0;
-  std::array<bit, 31> windowSizeIncrement;
+  uint32_t windowSizeIncrement;
 
   WindowUpdateFrame(const std::vector<bit> &bits);
 };
