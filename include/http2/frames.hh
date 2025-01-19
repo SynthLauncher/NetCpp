@@ -187,12 +187,16 @@ struct ContinuationFrame {
   uint24 length;
   const uint8_t type = 0x09;
 
+  const std::array<bit, 5> unusedFlag = {0, 0, 0, 0, 0};
+  bit endHeaderFlag;
+  const std::array<bit, 2> unusedFlag2 = {0, 0};
+
   const bit reserved = 0;
   uint32_t streamIdentifier;
 
-  const std::array<bit, 5> unusedFlag = {0, 0, 0, 0, 0};
-
   std::vector<bit> fieldBlockFragment;
+
+  ContinuationFrame(const std::vector<bit> &bits);
 };
 
 #endif // NETCPP_HTTP2_FRAMES_HH

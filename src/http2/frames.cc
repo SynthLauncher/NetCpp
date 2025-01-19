@@ -165,3 +165,14 @@ WindowUpdateFrame::WindowUpdateFrame(const std::vector<bit> &bits) {
   windowSizeIncrement =
       calcSize<uint32_t>(std::vector<bit>(bits.end() - 32, bits.end()));
 }
+
+ContinuationFrame::ContinuationFrame(const std::vector<bit> &bits) {
+  length = calcSize<uint24>(std::vector<bit>(bits.begin(), bits.begin() + 24));
+
+  endHeaderFlag = bits[38];
+
+  streamIdentifier = calcSize<uint32_t>(
+      std::vector<bit>(bits.begin() + 41, bits.begin() + 72));
+
+  fieldBlockFragment = std::vector<bit>(bits.begin() + 72, bits.end());
+}
