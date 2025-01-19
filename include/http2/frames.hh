@@ -157,13 +157,13 @@ struct GoawayFrame {
 
   const std::array<bit, 8> unusedFlag = {0, 0, 0, 0, 0, 0, 0, 0};
 
-  const bit reserved2 = 0;
-  std::array<bit, 31> lastStreamId;
-  std::array<bit, 32> errorCode;
-  std::vector<bit> additionalDebugData;
-
   const bit reserved = 0;
-  uint32_t streamIdentifier;
+  const uint32_t streamIdentifier = 0;
+
+  const bit reserved2 = 0;
+  uint32_t lastStreamId;
+  uint32_t errorCode;
+  std::vector<bit> additionalDebugData;
 
   GoawayFrame(const std::vector<bit> &bits);
 };

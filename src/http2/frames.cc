@@ -147,3 +147,13 @@ PingFrame::PingFrame(const std::vector<bit> &bits) {
   opaqueData =
       calcSize<uint64_t>(std::vector<bit>(bits.end() - 64, bits.end()));
 }
+
+GoawayFrame::GoawayFrame(const std::vector<bit> &bits) {
+  length = calcSize<uint24>(std::vector<bit>(bits.begin(), bits.begin() + 24));
+
+  lastStreamId = calcSize<uint32_t>(
+      std::vector<bit>(bits.begin() + 74, bits.begin() + 105));
+  errorCode = calcSize<uint32_t>(
+      std::vector<bit>(bits.begin() + 105, bits.begin() + 137));
+  additionalDebugData = std::vector<bit>(bits.begin() + 137, bits.end());
+}
