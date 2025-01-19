@@ -140,3 +140,10 @@ PushPromiseFrame::PushPromiseFrame(const std::vector<bit> &bits) {
     fieldBlockFragment = std::vector<bit>(bits.begin() + index, bits.end());
   }
 }
+
+PingFrame::PingFrame(const std::vector<bit> &bits) {
+  ackFlag = bits[39];
+
+  opaqueData =
+      calcSize<uint64_t>(std::vector<bit>(bits.end() - 64, bits.end()));
+}

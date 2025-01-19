@@ -144,9 +144,9 @@ struct PingFrame {
   bit ackFlag;
 
   const bit reserved = 0;
-  uint32_t streamIdentifier;
+  const uint32_t streamIdentifier = 0;
 
-  std::array<bit, 64> opaqueData;
+  uint64_t opaqueData;
 
   PingFrame(const std::vector<bit> &bits);
 };
