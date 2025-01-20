@@ -1,4 +1,4 @@
-project('NetCpp', 'cpp', license: 'MIT', version: '1.0.0', license_files: 'LICENSE', default_options: ['warning_level=3'])
+project('NetCpp', 'cpp', license: 'MIT', version: '1.0.0', license_files: 'LICENSE', default_options: ['warning_level=3', 'cpp_std=c++17'])
 
 
 src = [
