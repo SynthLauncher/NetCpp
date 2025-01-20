@@ -3,6 +3,7 @@
 
 #include "include/utils/uint24.hh"
 #include <array>
+#include <climits>
 #include <cmath>
 #include <cstdint>
 #include <vector>
@@ -11,6 +12,13 @@
   0x505249202a20485454502f322e300d0a0d0a534d0d0a0d0a
 
 using bit = bool;
+
+template <typename T>
+inline void fillBinary(T input, std::vector<bit> &bits) {
+  for (size_t i = sizeof(T) * CHAR_BIT - 1; i != SIZE_MAX; --i) {
+    bits.push_back(input & (1 << i) ? 1 : 0);
+  }
+}
 
 inline int calcPadding(size_t payloadLength) {
   return (8 - (payloadLength % 8)) % 8;
