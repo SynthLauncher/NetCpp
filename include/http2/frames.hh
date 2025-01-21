@@ -2,10 +2,12 @@
 #define NETCPP_HTTP2_FRAMES_HH
 
 #include "include/utils/uint24.hh"
+#include "include/utils/uint31.hh"
 #include <array>
 #include <climits>
 #include <cmath>
 #include <cstdint>
+#include <type_traits>
 #include <vector>
 
 #define HTTP2_CONNECTION_PREFACE                                               \
@@ -37,7 +39,7 @@ struct DataFrame {
   bit endStreamFlag;
 
   const bit reserved = 0;
-  uint32_t streamIdentifier;
+  uint31 streamIdentifier;
 
   uint8_t padLength;
   std::vector<bit> data;
@@ -59,11 +61,11 @@ struct HeaderFrame {
   bit endStreamFlag;
 
   const bit reserved = 0;
-  uint32_t streamIdentifier;
+  uint31 streamIdentifier;
 
   uint8_t padLength;
   bit exclusive;
-  uint32_t streamDependency;
+  uint31 streamDependency;
   uint8_t weight;
   std::vector<bit> fieldBlockFragment;
   std::vector<uint8_t> padding;
@@ -78,10 +80,10 @@ struct PriorityFrame {
   const std::array<bit, 8> unusedFlag = {0, 0, 0, 0, 0, 0, 0, 0};
 
   const bit reserved = 0;
-  uint32_t streamIdentifier;
+  uint31 streamIdentifier;
 
   bit exclusive;
-  uint32_t streamDependency;
+  uint31 streamDependency;
   uint8_t weight;
 
   PriorityFrame(const std::vector<bit> &bits);
@@ -94,7 +96,7 @@ struct RstStreamFrame {
   const std::array<bit, 8> unusedFlag = {0, 0, 0, 0, 0, 0, 0, 0};
 
   const bit reserved = 0;
-  uint32_t streamIdentifier;
+  uint31 streamIdentifier;
 
   uint32_t errorCode;
 
@@ -117,7 +119,7 @@ struct SettingFrame {
   bit ackFlag;
 
   const bit reserved = 0;
-  const uint32_t streamIdentifier = 0;
+  const uint31 streamIdentifier = 0;
 
   std::vector<Setting> settings;
 
@@ -134,11 +136,11 @@ struct PushPromiseFrame {
   const std::array<bit, 2> unusedFlag2 = {0, 0};
 
   const bit reserved = 0;
-  uint32_t streamIdentifier;
+  uint31 streamIdentifier;
 
   uint8_t padLength;
   const bit reserved2 = 0;
-  uint32_t promiseStreamId;
+  uint31 promiseStreamId;
   std::vector<bit> fieldBlockFragment;
   std::vector<uint8_t> padding;
 
@@ -153,7 +155,7 @@ struct PingFrame {
   bit ackFlag;
 
   const bit reserved = 0;
-  const uint32_t streamIdentifier = 0;
+  const uint31 streamIdentifier = 0;
 
   uint64_t opaqueData;
 
@@ -167,10 +169,10 @@ struct GoawayFrame {
   const std::array<bit, 8> unusedFlag = {0, 0, 0, 0, 0, 0, 0, 0};
 
   const bit reserved = 0;
-  const uint32_t streamIdentifier = 0;
+  const uint31 streamIdentifier = 0;
 
   const bit reserved2 = 0;
-  uint32_t lastStreamId;
+  uint31 lastStreamId;
   uint32_t errorCode;
   std::vector<bit> additionalDebugData;
 
@@ -184,7 +186,7 @@ struct WindowUpdateFrame {
   const std::array<bit, 8> unusedFlag = {0, 0, 0, 0, 0, 0, 0, 0};
 
   const bit reserved = 0;
-  uint32_t streamIdentifier;
+  uint31 streamIdentifier;
 
   const bit reserved2 = 0;
   uint32_t windowSizeIncrement;
@@ -201,7 +203,7 @@ struct ContinuationFrame {
   const std::array<bit, 2> unusedFlag2 = {0, 0};
 
   const bit reserved = 0;
-  uint32_t streamIdentifier;
+  uint31 streamIdentifier;
 
   std::vector<bit> fieldBlockFragment;
 
