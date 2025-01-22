@@ -31,9 +31,11 @@ DataFrame::DataFrame(const std::vector<bit> &bits) {
 
   if (paddedFlag) {
     padLength = calcSize<uint8_t>(
-        std::vector<bit>(bits.begin() + 73, bits.begin() + 81));
-    data = std::vector<bit>(bits.begin() + 82, bits.end() - padLength);
-    padding = std::vector<uint8_t>(padLength, 0);
+        std::vector<bit>(bits.begin() + 72, bits.begin() + 80));
+
+    size_t padLengthInBit = padLength * CHAR_BIT;
+    data = std::vector<bit>(bits.begin() + 80, bits.end() - padLengthInBit);
+    padding = std::vector<uint8_t>(padLengthInBit, 0);
   } else {
     data = std::vector<bit>(bits.begin() + 72, bits.end());
   }

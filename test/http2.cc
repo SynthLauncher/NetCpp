@@ -118,3 +118,31 @@ TEST(Http2, DataFrameParseWithoutPadding) {
   EXPECT_EQ(frame.streamIdentifier, 3);
   EXPECT_EQ(frame.data, expectData);
 }
+
+TEST(Http2, DataFrameParseWithPadding) {
+  std::vector<bit> bits;
+  std::vector<bit> expectData{0, 1, 1, 0, 0, 0, 1, 1};
+
+  fillBinary<uint24>(1, bits);
+  bits.insert(bits.end(), 8, 0);
+  bits.insert(bits.end(), 4, 0);
+  bits.push_back(1);
+  bits.insert(bits.end(), 2, 0);
+  bits.push_back(1);
+  bits.push_back(0);
+  fillBinary<uint31>(3, bits);
+  fillBinary<uint8_t>(calcPadding(1), bits);
+  fillBinary<unsigned char>('c', bits);
+  bits.insert(bits.end(), calcPadding(1) * CHAR_BIT, 0);
+
+  DataFrame frame{bits};
+
+  EXPECT_EQ(frame.length, 1);
+  EXPECT_EQ(frame.type, 0);
+  EXPECT_EQ(frame.paddedFlag, 1);
+  EXPECT_EQ(frame.endStreamFlag, 1);
+  EXPECT_EQ(frame.streamIdentifier, 3);
+  EXPECT_EQ(frame.padLength, 7);
+  EXPECT_EQ(frame.data, expectData);
+  EXPECT_EQ(frame.padding.size(), 7 * CHAR_BIT);
+}
