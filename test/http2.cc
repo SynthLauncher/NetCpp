@@ -160,3 +160,167 @@ TEST(Http2, DataFrameParseWithPadding) {
   EXPECT_EQ(frame.data, expectData);
   EXPECT_EQ(frame.padding.size(), 7 * CHAR_BIT);
 }
+
+TEST(Http2, HeaderFrameWithoutPaddingWithoutPriority) {
+  std::vector<bit> bits;
+  std::vector<bit> expectFieldFrame = {0, 0, 1, 0, 0, 1, 1, 0};
+
+  // Length, Type
+  fillBinary<uint24>(8, bits);
+  fillBinary<uint8_t>(1, bits);
+
+  // Flag
+  bits.insert(bits.end(), 2, 0);
+  bits.push_back(0);
+  bits.push_back(0);
+  bits.push_back(0);
+  bits.push_back(1);
+  bits.push_back(0);
+  bits.push_back(1);
+
+  // Stream Depedency
+  bits.push_back(0);
+  fillBinary<uint31>(3, bits);
+
+  // Field Block Fragment
+  bits.insert(bits.end(), expectFieldFrame.begin(), expectFieldFrame.end());
+
+  HeaderFrame frame{bits};
+
+  EXPECT_EQ(frame.length, 8);
+  EXPECT_EQ(frame.type, 1);
+  EXPECT_EQ(frame.priorityFlag, 0);
+  EXPECT_EQ(frame.paddedFlag, 0);
+  EXPECT_EQ(frame.endHeaderFlag, 1);
+  EXPECT_EQ(frame.endStreamFlag, 1);
+  EXPECT_EQ(frame.streamIdentifier, 3);
+  EXPECT_EQ(frame.fieldBlockFragment, expectFieldFrame);
+}
+
+TEST(Http2, HeaderFrameWithPaddingWithoutPriority) {
+  std::vector<bit> bits;
+  std::vector<bit> expectFieldFrame = {0, 0, 1, 0, 0, 1, 1, 0};
+
+  // Length, Type
+  fillBinary<uint24>(8, bits);
+  fillBinary<uint8_t>(1, bits);
+
+  // Flag
+  bits.insert(bits.end(), 2, 0);
+  bits.push_back(0);
+  bits.push_back(0);
+  bits.push_back(1);
+  bits.push_back(1);
+  bits.push_back(0);
+  bits.push_back(1);
+
+  // Stream Depedency
+  bits.push_back(0);
+  fillBinary<uint31>(3, bits);
+
+  // Field Block Fragment, Padding
+  fillBinary<uint8_t>(calcPadding(1), bits);
+  bits.insert(bits.end(), expectFieldFrame.begin(), expectFieldFrame.end());
+  bits.insert(bits.end(), calcPadding(1) * CHAR_BIT, 0);
+
+  HeaderFrame frame{bits};
+
+  EXPECT_EQ(frame.length, 8);
+  EXPECT_EQ(frame.type, 1);
+  EXPECT_EQ(frame.priorityFlag, 0);
+  EXPECT_EQ(frame.paddedFlag, 1);
+  EXPECT_EQ(frame.endHeaderFlag, 1);
+  EXPECT_EQ(frame.endStreamFlag, 1);
+  EXPECT_EQ(frame.streamIdentifier, 3);
+  EXPECT_EQ(frame.padLength, 7);
+  EXPECT_EQ(frame.fieldBlockFragment, expectFieldFrame);
+  EXPECT_EQ(frame.padding.size(), 7 * CHAR_BIT);
+}
+
+TEST(Http2, HeaderFrameWithoutPaddingWithPriority) {
+  std::vector<bit> bits;
+  std::vector<bit> expectFieldFrame = {0, 0, 1, 0, 0, 1, 1, 0};
+
+  // Length, Type
+  fillBinary<uint24>(8, bits);
+  fillBinary<uint8_t>(1, bits);
+
+  // Flag
+  bits.insert(bits.end(), 2, 0);
+  bits.push_back(1);
+  bits.push_back(0);
+  bits.push_back(0);
+  bits.push_back(1);
+  bits.push_back(0);
+  bits.push_back(1);
+
+  // Stream Depedency
+  bits.push_back(0);
+  fillBinary<uint31>(3, bits);
+
+  // Field Block Fragment, Priority fields
+  bits.push_back(0);
+  fillBinary<uint31>(43, bits);
+  fillBinary<uint8_t>(1, bits);
+  bits.insert(bits.end(), expectFieldFrame.begin(), expectFieldFrame.end());
+
+  HeaderFrame frame{bits};
+
+  EXPECT_EQ(frame.length, 8);
+  EXPECT_EQ(frame.type, 1);
+  EXPECT_EQ(frame.priorityFlag, 1);
+  EXPECT_EQ(frame.paddedFlag, 0);
+  EXPECT_EQ(frame.endHeaderFlag, 1);
+  EXPECT_EQ(frame.endStreamFlag, 1);
+  EXPECT_EQ(frame.streamIdentifier, 3);
+  EXPECT_EQ(frame.exclusive, 0);
+  EXPECT_EQ(frame.streamDependency, 43);
+  EXPECT_EQ(frame.weight, 1);
+  EXPECT_EQ(frame.fieldBlockFragment, expectFieldFrame);
+}
+
+TEST(Http2, HeaderFrameWithPaddingWithPriority) {
+  std::vector<bit> bits;
+  std::vector<bit> expectFieldFrame = {0, 0, 1, 0, 0, 1, 1, 0};
+
+  // Length, Type
+  fillBinary<uint24>(8, bits);
+  fillBinary<uint8_t>(1, bits);
+
+  // Flag
+  bits.insert(bits.end(), 2, 0);
+  bits.push_back(1);
+  bits.push_back(0);
+  bits.push_back(1);
+  bits.push_back(1);
+  bits.push_back(0);
+  bits.push_back(1);
+
+  // Stream Depedency
+  bits.push_back(0);
+  fillBinary<uint31>(3, bits);
+
+  // Field Block Fragment, Padding, Priority fields
+  fillBinary<uint8_t>(calcPadding(1), bits);
+  bits.push_back(0);
+  fillBinary<uint31>(43, bits);
+  fillBinary<uint8_t>(1, bits);
+  bits.insert(bits.end(), expectFieldFrame.begin(), expectFieldFrame.end());
+  bits.insert(bits.end(), calcPadding(1) * CHAR_BIT, 0);
+
+  HeaderFrame frame{bits};
+
+  EXPECT_EQ(frame.length, 8);
+  EXPECT_EQ(frame.type, 1);
+  EXPECT_EQ(frame.priorityFlag, 1);
+  EXPECT_EQ(frame.paddedFlag, 1);
+  EXPECT_EQ(frame.endHeaderFlag, 1);
+  EXPECT_EQ(frame.endStreamFlag, 1);
+  EXPECT_EQ(frame.streamIdentifier, 3);
+  EXPECT_EQ(frame.padLength, 7);
+  EXPECT_EQ(frame.exclusive, 0);
+  EXPECT_EQ(frame.streamDependency, 43);
+  EXPECT_EQ(frame.weight, 1);
+  EXPECT_EQ(frame.fieldBlockFragment, expectFieldFrame);
+  EXPECT_EQ(frame.padding.size(), 7 * CHAR_BIT);
+}

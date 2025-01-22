@@ -44,36 +44,36 @@ DataFrame::DataFrame(const std::vector<bit> &bits) {
 HeaderFrame::HeaderFrame(const std::vector<bit> &bits) {
   length = calcSize<uint24>(std::vector<bit>(bits.begin(), bits.begin() + 24));
 
-  priorityFlag = bits[35];
-  paddedFlag = bits[37];
-  endHeaderFlag = bits[38];
-  endStreamFlag = bits[40];
+  priorityFlag = bits[34];
+  paddedFlag = bits[36];
+  endHeaderFlag = bits[37];
+  endStreamFlag = bits[39];
 
   streamIdentifier =
       calcSize<uint31>(std::vector<bit>(bits.begin() + 41, bits.begin() + 72));
 
-  size_t index = 73;
+  size_t index = 72;
 
   if (paddedFlag) {
     padLength = calcSize<uint8_t>(
         std::vector<bit>(bits.begin() + index, bits.begin() + index + 8));
-    padding = std::vector<uint8_t>(padLength, 0);
-    index += 9;
+    padding = std::vector<uint8_t>(padLength * CHAR_BIT, 0);
+    index += 8;
   }
 
   if (priorityFlag) {
     exclusive = bits[index++];
     streamDependency = calcSize<uint31>(
         std::vector<bit>(bits.begin() + index, bits.begin() + index + 31));
-    index += 33;
+    index += 31;
     weight = calcSize<uint8_t>(
         std::vector<bit>(bits.begin() + index, bits.begin() + index + 8));
-    index += 9;
+    index += 8;
   }
 
   if (paddedFlag) {
-    fieldBlockFragment =
-        std::vector<bit>(bits.begin() + index, bits.end() - padLength);
+    fieldBlockFragment = std::vector<bit>(bits.begin() + index,
+                                          bits.end() - padLength * CHAR_BIT);
   } else {
     fieldBlockFragment = std::vector<bit>(bits.begin() + index, bits.end());
   }
