@@ -83,11 +83,11 @@ PriorityFrame::PriorityFrame(const std::vector<bit> &bits) {
   streamIdentifier =
       calcSize<uint31>(std::vector<bit>(bits.begin() + 41, bits.begin() + 72));
 
-  exclusive = bits[73];
+  exclusive = bits[72];
   streamDependency =
-      calcSize<uint31>(std::vector<bit>(bits.begin() + 74, bits.begin() + 105));
+      calcSize<uint31>(std::vector<bit>(bits.begin() + 73, bits.end() - 8));
 
-  weight = calcSize<uint8_t>(std::vector<bit>(bits.begin() + 106, bits.end()));
+  weight = calcSize<uint8_t>(std::vector<bit>(bits.end() - 8, bits.end()));
 }
 
 RstStreamFrame::RstStreamFrame(const std::vector<bit> &bits) {

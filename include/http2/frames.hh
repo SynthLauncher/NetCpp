@@ -75,7 +75,7 @@ struct HeaderFrame {
 };
 
 struct PriorityFrame {
-  uint24 length;
+  const uint24 length = 5;
   const uint8_t type = 0x02;
 
   const std::array<bit, 8> unusedFlag = {0, 0, 0, 0, 0, 0, 0, 0};

@@ -324,3 +324,32 @@ TEST(Http2, HeaderFrameWithPaddingWithPriority) {
   EXPECT_EQ(frame.fieldBlockFragment, expectFieldFrame);
   EXPECT_EQ(frame.padding.size(), 7 * CHAR_BIT);
 }
+
+TEST(Http2, PriorityFrame) {
+  std::vector<bit> bits;
+
+  // Length, Type
+  fillBinary<uint24>(5, bits);
+  fillBinary<uint8_t>(2, bits);
+
+  // Flag
+  bits.insert(bits.end(), 8, 0);
+
+  // Stream Identifier
+  bits.push_back(0);
+  fillBinary<uint31>(4, bits);
+
+  // Exclusive, Stream Depedency, Weight
+  bits.push_back(0);
+  fillBinary<uint31>(43, bits);
+  fillBinary<uint8_t>(2, bits);
+
+  PriorityFrame frame{bits};
+
+  EXPECT_EQ(frame.length, 5);
+  EXPECT_EQ(frame.type, 2);
+  EXPECT_EQ(frame.streamIdentifier, 4);
+  EXPECT_EQ(frame.exclusive, 0);
+  EXPECT_EQ(frame.streamDependency, 43);
+  EXPECT_EQ(frame.weight, 2);
+}
