@@ -11,7 +11,88 @@ TEST(Http2, FillBinaryUint8) {
 
   fillBinary(number, bits);
 
+  ASSERT_EQ(bits.size(), 8);
   ASSERT_EQ(bits, expectResult);
+}
+
+TEST(Http2, FillBinaryUint24) {
+  std::vector<bit> bits;
+  std::vector<bit> expectResult = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                   0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1};
+  uint24 number = 5;
+
+  fillBinary(number, bits);
+
+  ASSERT_EQ(bits.size(), 24);
+  ASSERT_EQ(bits, expectResult);
+}
+
+TEST(Http2, FillBinaryUint31) {
+  std::vector<bit> bits;
+  std::vector<bit> expectResult = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                   0, 0, 0, 0, 0, 0, 1, 0, 1};
+  uint31 number = 5;
+
+  fillBinary(number, bits);
+
+  ASSERT_EQ(bits.size(), 31);
+  ASSERT_EQ(bits, expectResult);
+}
+
+TEST(Http2, FillBinaryUint32) {
+  std::vector<bit> bits;
+  std::vector<bit> expectResult = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                   0, 0, 0, 0, 0, 0, 0, 1, 0, 1};
+  uint32_t number = 5;
+
+  fillBinary(number, bits);
+
+  ASSERT_EQ(bits.size(), 32);
+  ASSERT_EQ(bits, expectResult);
+}
+
+TEST(Http2, CalcSizeUint8) {
+  const std::vector<bit> dataTest = {0, 0, 0, 0, 0, 1, 0, 0};
+
+  uint8_t result = calcSize<uint8_t>(dataTest);
+
+  ASSERT_EQ(dataTest.size(), 8);
+  ASSERT_EQ(result, 4);
+}
+
+TEST(Http2, CalcSizeUint24) {
+  uint24 shouldBeResult = 15;
+  std::vector<bit> dataTest;
+  fillBinary(shouldBeResult, dataTest);
+
+  uint24 result = calcSize<uint24>(dataTest);
+
+  ASSERT_EQ(dataTest.size(), 24);
+  ASSERT_EQ(result, shouldBeResult);
+}
+
+TEST(Http2, CalcSizeUint31) {
+  uint31 shouldBeResult = 142;
+  std::vector<bit> dataTest;
+  fillBinary(shouldBeResult, dataTest);
+
+  uint31 result = calcSize<uint31>(dataTest);
+
+  ASSERT_EQ(dataTest.size(), 31);
+  ASSERT_EQ(result, shouldBeResult);
+}
+
+TEST(Http2, CalcSizeUint32) {
+  uint32_t shouldBeResult = 312;
+  std::vector<bit> dataTest;
+  fillBinary(shouldBeResult, dataTest);
+
+  uint32_t result = calcSize<uint32_t>(dataTest);
+
+  ASSERT_EQ(dataTest.size(), 32);
+  ASSERT_EQ(result, shouldBeResult);
 }
 
 TEST(Http2, DataFrameParseWithoutPadding) {
@@ -26,7 +107,6 @@ TEST(Http2, DataFrameParseWithoutPadding) {
   bits.push_back(1);
   bits.push_back(0);
   fillBinary<uint31>(3, bits);
-  bits.erase(bits.begin() + 41);
   fillBinary<unsigned char>('c', bits);
 
   DataFrame frame{bits};

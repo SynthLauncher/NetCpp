@@ -17,12 +17,13 @@ using bit = bool;
 
 template <typename T>
 inline void fillBinary(T input, std::vector<bit> &bits) {
-  for (size_t i = sizeof(T) * CHAR_BIT - 1; i != SIZE_MAX; --i) {
+  size_t size = std::is_same<T, uint31>::value ? 31 : sizeof(T) * CHAR_BIT;
+  for (size_t i = size - 1; i != SIZE_MAX; --i) {
     bits.push_back(input & (1 << i) ? 1 : 0);
   }
 }
 
-inline int calcPadding(size_t payloadLength) {
+inline int calcPadding(const size_t payloadLength) {
   return (8 - (payloadLength % 8)) % 8;
 }
 

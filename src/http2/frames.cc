@@ -4,6 +4,7 @@ template <typename T>
 T calcSize(const std::vector<bit> &bits) {
   T res = 0;
   size_t size;
+
   if (std::is_same<T, uint31>::value) {
     size = 31;
   } else {
