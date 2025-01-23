@@ -15,6 +15,18 @@ TEST(Http2, FillBinaryUint8) {
   ASSERT_EQ(bits, expectResult);
 }
 
+TEST(Http2, FillBinaryUint16) {
+  std::vector<bit> bits;
+  std::vector<bit> expectResult = {0, 0, 0, 0, 0, 0, 0, 0,
+                                   0, 0, 0, 0, 0, 1, 0, 1};
+  uint16_t number = 5;
+
+  fillBinary(number, bits);
+
+  ASSERT_EQ(bits.size(), 16);
+  ASSERT_EQ(bits, expectResult);
+}
+
 TEST(Http2, FillBinaryUint24) {
   std::vector<bit> bits;
   std::vector<bit> expectResult = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -60,6 +72,17 @@ TEST(Http2, CalcSizeUint8) {
 
   ASSERT_EQ(dataTest.size(), 8);
   ASSERT_EQ(result, 4);
+}
+
+TEST(Http2, CalcSizeUint16) {
+  uint16_t shouldBeResult = 432;
+  std::vector<bit> dataTest;
+  fillBinary(shouldBeResult, dataTest);
+
+  uint16_t result = calcSize<uint16_t>(dataTest);
+
+  ASSERT_EQ(dataTest.size(), 16);
+  ASSERT_EQ(result, shouldBeResult);
 }
 
 TEST(Http2, CalcSizeUint24) {
@@ -377,4 +400,68 @@ TEST(Http2, RstStreamFrame) {
   EXPECT_EQ(frame.type, 3);
   EXPECT_EQ(frame.streamIdentifier, 5);
   EXPECT_EQ(frame.errorCode, 0);
+}
+
+TEST(Http2, SettingsFrameWithSingleSetting) {
+  std::vector<bit> bits;
+
+  // Length, Type
+  fillBinary<uint24>(6, bits);
+  fillBinary<uint8_t>(4, bits);
+
+  // Flag
+  bits.insert(bits.end(), 7, 0);
+  bits.push_back(1);
+
+  // Stream Identifier
+  bits.insert(bits.end(), 32, 0);
+
+  // Setting
+  Setting setting{2, 0};
+  fillBinary<uint16_t>(setting.identifier, bits);
+  fillBinary<uint32_t>(setting.value, bits);
+
+  SettingFrame frame{bits};
+
+  EXPECT_EQ(frame.length, 6);
+  EXPECT_EQ(frame.type, 4);
+  EXPECT_EQ(frame.ackFlag, 1);
+  EXPECT_EQ(frame.streamIdentifier, 0);
+  EXPECT_EQ(frame.settings[0].identifier, 2);
+  EXPECT_EQ(frame.settings[0].value, 0);
+}
+
+TEST(Http2, SettingsFrameWithMultipleSetting) {
+  std::vector<bit> bits;
+
+  // Length, Type
+  fillBinary<uint24>(6, bits);
+  fillBinary<uint8_t>(4, bits);
+
+  // Flag
+  bits.insert(bits.end(), 7, 0);
+  bits.push_back(1);
+
+  // Stream Identifier
+  bits.insert(bits.end(), 32, 0);
+
+  // Setting
+  Setting setting{2, 0};
+  Setting setting2{3, 1};
+  fillBinary(setting.identifier, bits);
+  fillBinary(setting.value, bits);
+  fillBinary(setting2.identifier, bits);
+  fillBinary(setting2.value, bits);
+
+  SettingFrame frame{bits};
+
+  EXPECT_EQ(frame.length, 6);
+  EXPECT_EQ(frame.type, 4);
+  EXPECT_EQ(frame.ackFlag, 1);
+  EXPECT_EQ(frame.streamIdentifier, 0);
+  ASSERT_EQ(frame.settings.size(), 2);
+  EXPECT_EQ(frame.settings[0].identifier, 2);
+  EXPECT_EQ(frame.settings[0].value, 0);
+  EXPECT_EQ(frame.settings[1].identifier, 3);
+  EXPECT_EQ(frame.settings[1].value, 1);
 }
