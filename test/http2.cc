@@ -353,3 +353,28 @@ TEST(Http2, PriorityFrame) {
   EXPECT_EQ(frame.streamDependency, 43);
   EXPECT_EQ(frame.weight, 2);
 }
+
+TEST(Http2, RstStreamFrame) {
+  std::vector<bit> bits;
+
+  // Length, Type
+  fillBinary<uint24>(4, bits);
+  fillBinary<uint8_t>(3, bits);
+
+  // Flag
+  bits.insert(bits.end(), 8, 0);
+
+  // Steam Depedency
+  bits.push_back(0);
+  fillBinary<uint31>(5, bits);
+
+  // Error Code
+  bits.insert(bits.end(), 32, 0);
+
+  RstStreamFrame frame{bits};
+
+  EXPECT_EQ(frame.length, 4);
+  EXPECT_EQ(frame.type, 3);
+  EXPECT_EQ(frame.streamIdentifier, 5);
+  EXPECT_EQ(frame.errorCode, 0);
+}
