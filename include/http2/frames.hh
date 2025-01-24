@@ -44,7 +44,7 @@ struct DataFrame {
 
   uint8_t padLength;
   std::vector<bit> data;
-  std::vector<uint8_t> padding;
+  std::vector<bit> padding;
 
   DataFrame(const std::vector<bit> &bits);
 };
@@ -69,7 +69,7 @@ struct HeaderFrame {
   uint31 streamDependency;
   uint8_t weight;
   std::vector<bit> fieldBlockFragment;
-  std::vector<uint8_t> padding;
+  std::vector<bit> padding;
 
   HeaderFrame(const std::vector<bit> &bits);
 };
@@ -143,7 +143,7 @@ struct PushPromiseFrame {
   const bit reserved2 = 0;
   uint31 promiseStreamId;
   std::vector<bit> fieldBlockFragment;
-  std::vector<uint8_t> padding;
+  std::vector<bit> padding;
 
   PushPromiseFrame(const std::vector<bit> &bits);
 };

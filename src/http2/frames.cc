@@ -35,7 +35,7 @@ DataFrame::DataFrame(const std::vector<bit> &bits) {
 
     size_t padLengthInBit = padLength * CHAR_BIT;
     data = std::vector<bit>(bits.begin() + 80, bits.end() - padLengthInBit);
-    padding = std::vector<uint8_t>(padLengthInBit, 0);
+    padding = std::vector<bit>(padLengthInBit, 0);
   } else {
     data = std::vector<bit>(bits.begin() + 72, bits.end());
   }
@@ -57,7 +57,7 @@ HeaderFrame::HeaderFrame(const std::vector<bit> &bits) {
   if (paddedFlag) {
     padLength = calcSize<uint8_t>(
         std::vector<bit>(bits.begin() + index, bits.begin() + index + 8));
-    padding = std::vector<uint8_t>(padLength * CHAR_BIT, 0);
+    padding = std::vector<bit>(padLength * CHAR_BIT, 0);
     index += 8;
   }
 
@@ -130,7 +130,7 @@ PushPromiseFrame::PushPromiseFrame(const std::vector<bit> &bits) {
   if (paddedFlag) {
     padLength = calcSize<uint8_t>(
         std::vector<bit>(bits.begin() + index, bits.begin() + index + 8));
-    padding = std::vector<uint8_t>(padLength * CHAR_BIT, 0);
+    padding = std::vector<bit>(padLength * CHAR_BIT, 0);
     index += 8;
   }
 
