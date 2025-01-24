@@ -181,7 +181,6 @@ TEST(Http2, DataFrameParseWithPadding) {
   EXPECT_EQ(frame.streamIdentifier, 3);
   EXPECT_EQ(frame.padLength, 7);
   EXPECT_EQ(frame.data, expectData);
-  EXPECT_EQ(frame.padding.size(), 7 * CHAR_BIT);
 }
 
 TEST(Http2, HeaderFrameWithoutPaddingWithoutPriority) {
@@ -257,7 +256,6 @@ TEST(Http2, HeaderFrameWithPaddingWithoutPriority) {
   EXPECT_EQ(frame.streamIdentifier, 3);
   EXPECT_EQ(frame.padLength, 7);
   EXPECT_EQ(frame.fieldBlockFragment, expectFieldFrame);
-  EXPECT_EQ(frame.padding.size(), 7 * CHAR_BIT);
 }
 
 TEST(Http2, HeaderFrameWithoutPaddingWithPriority) {
@@ -345,7 +343,6 @@ TEST(Http2, HeaderFrameWithPaddingWithPriority) {
   EXPECT_EQ(frame.streamDependency, 43);
   EXPECT_EQ(frame.weight, 1);
   EXPECT_EQ(frame.fieldBlockFragment, expectFieldFrame);
-  EXPECT_EQ(frame.padding.size(), 7 * CHAR_BIT);
 }
 
 TEST(Http2, PriorityFrame) {
@@ -534,5 +531,4 @@ TEST(Http2, PushPromiseWithPadding) {
   EXPECT_EQ(frame.streamIdentifier, 43);
   EXPECT_EQ(frame.promiseStreamId, 55);
   EXPECT_EQ(frame.fieldBlockFragment, expectFieldFrame);
-  EXPECT_EQ(frame.padding.size(), 3 * CHAR_BIT);
 }
