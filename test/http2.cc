@@ -532,3 +532,30 @@ TEST(Http2, PushPromiseWithPadding) {
   EXPECT_EQ(frame.promiseStreamId, 55);
   EXPECT_EQ(frame.fieldBlockFragment, expectFieldFrame);
 }
+
+TEST(Http2, PingFrame) {
+  std::vector<bit> bits;
+
+  // Length, Type
+  fillBinary<uint24>(8, bits);
+  fillBinary<uint8_t>(6, bits);
+
+  // Flag
+  bits.insert(bits.end(), 7, 0);
+  bits.push_back(1);
+
+  // Stream Depedency
+  bits.push_back(0);
+  bits.insert(bits.end(), 31, 0);
+
+  // Opaque Data
+  bits.insert(bits.end(), 64, 0);
+
+  PingFrame frame{bits};
+
+  EXPECT_EQ(frame.length, 8);
+  EXPECT_EQ(frame.type, 6);
+  EXPECT_EQ(frame.ackFlag, 1);
+  EXPECT_EQ(frame.streamIdentifier, 0);
+  EXPECT_EQ(frame.opaqueData, 0);
+}
