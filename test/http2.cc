@@ -559,3 +559,64 @@ TEST(Http2, PingFrame) {
   EXPECT_EQ(frame.streamIdentifier, 0);
   EXPECT_EQ(frame.opaqueData, 0);
 }
+
+TEST(Http2, GoawayFrameWithoutData) {
+  std::vector<bit> bits;
+
+  // Length, Type
+  fillBinary<uint24>(3, bits);
+  fillBinary<uint8_t>(7, bits);
+
+  // Flag
+  bits.insert(bits.end(), 8, 0);
+
+  // Stream Depedency
+  bits.push_back(0);
+  bits.insert(bits.end(), 31, 0);
+
+  // Last Stream Id, ErrorCode, Debug Data
+  bits.push_back(0);
+  fillBinary<uint31>(4, bits);
+  bits.insert(bits.end(), 32, 0);
+
+  GoawayFrame frame{bits};
+
+  EXPECT_EQ(frame.length, 3);
+  EXPECT_EQ(frame.type, 7);
+  EXPECT_EQ(frame.streamIdentifier, 0);
+  EXPECT_EQ(frame.lastStreamId, 4);
+  EXPECT_EQ(frame.errorCode, 0);
+  ASSERT_EQ(frame.additionalDebugData.size(), 0);
+}
+
+TEST(Http2, GoawayFrameWithData) {
+  std::vector<bit> bits;
+  std::vector<bit> expectDebugData = {0, 1, 0, 1, 1, 0, 1, 0, 0};
+
+  // Length, Type
+  fillBinary<uint24>(3, bits);
+  fillBinary<uint8_t>(7, bits);
+
+  // Flag
+  bits.insert(bits.end(), 8, 0);
+
+  // Stream Depedency
+  bits.push_back(0);
+  bits.insert(bits.end(), 31, 0);
+
+  // Last Stream Id, ErrorCode, Debug Data
+  bits.push_back(0);
+  fillBinary<uint31>(4, bits);
+  bits.insert(bits.end(), 32, 0);
+  bits.insert(bits.end(), expectDebugData.begin(), expectDebugData.end());
+
+  GoawayFrame frame{bits};
+
+  EXPECT_EQ(frame.length, 3);
+  EXPECT_EQ(frame.type, 7);
+  EXPECT_EQ(frame.streamIdentifier, 0);
+  EXPECT_EQ(frame.lastStreamId, 4);
+  EXPECT_EQ(frame.errorCode, 0);
+  ASSERT_EQ(frame.additionalDebugData.size(), 9);
+  EXPECT_EQ(frame.additionalDebugData, expectDebugData);
+}

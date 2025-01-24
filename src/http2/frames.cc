@@ -156,10 +156,10 @@ GoawayFrame::GoawayFrame(const std::vector<bit> &bits) {
   length = calcSize<uint24>(std::vector<bit>(bits.begin(), bits.begin() + 24));
 
   lastStreamId =
-      calcSize<uint31>(std::vector<bit>(bits.begin() + 74, bits.begin() + 105));
+      calcSize<uint31>(std::vector<bit>(bits.begin() + 73, bits.begin() + 104));
   errorCode = calcSize<uint32_t>(
-      std::vector<bit>(bits.begin() + 105, bits.begin() + 137));
-  additionalDebugData = std::vector<bit>(bits.begin() + 137, bits.end());
+      std::vector<bit>(bits.begin() + 104, bits.begin() + 136));
+  additionalDebugData = std::vector<bit>(bits.begin() + 136, bits.end());
 }
 
 WindowUpdateFrame::WindowUpdateFrame(const std::vector<bit> &bits) {
