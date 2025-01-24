@@ -465,3 +465,74 @@ TEST(Http2, SettingsFrameWithMultipleSetting) {
   EXPECT_EQ(frame.settings[1].identifier, 3);
   EXPECT_EQ(frame.settings[1].value, 1);
 }
+
+TEST(Http2, PushPromiseWithoutPadding) {
+  std::vector<bit> bits;
+  std::vector<bit> expectFieldFrame = {0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1};
+
+  // Length, Type
+  fillBinary<uint24>(5, bits);
+  fillBinary<uint8_t>(5, bits);
+
+  // Flag
+  bits.insert(bits.end(), 4, 0);
+  bits.push_back(0);
+  bits.push_back(1);
+  bits.insert(bits.end(), 2, 0);
+
+  // Stream Depedency
+  bits.push_back(0);
+  fillBinary<uint31>(43, bits);
+
+  // Promise stream, field block fragment
+  bits.push_back(0);
+  fillBinary<uint31>(55, bits);
+  bits.insert(bits.end(), expectFieldFrame.begin(), expectFieldFrame.end());
+
+  PushPromiseFrame frame{bits};
+
+  EXPECT_EQ(frame.length, 5);
+  EXPECT_EQ(frame.type, 5);
+  EXPECT_EQ(frame.paddedFlag, 0);
+  EXPECT_EQ(frame.endHeaderFlag, 1);
+  EXPECT_EQ(frame.streamIdentifier, 43);
+  EXPECT_EQ(frame.promiseStreamId, 55);
+  EXPECT_EQ(frame.fieldBlockFragment, expectFieldFrame);
+}
+
+TEST(Http2, PushPromiseWithPadding) {
+  std::vector<bit> bits;
+  std::vector<bit> expectFieldFrame = {0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1};
+
+  // Length, Type
+  fillBinary<uint24>(5, bits);
+  fillBinary<uint8_t>(5, bits);
+
+  // Flag
+  bits.insert(bits.end(), 4, 0);
+  bits.push_back(1);
+  bits.push_back(1);
+  bits.insert(bits.end(), 2, 0);
+
+  // Stream Depedency
+  bits.push_back(0);
+  fillBinary<uint31>(43, bits);
+
+  // Promise stream, field block fragment
+  fillBinary<uint8_t>(calcPadding(5), bits);
+  bits.push_back(0);
+  fillBinary<uint31>(55, bits);
+  bits.insert(bits.end(), expectFieldFrame.begin(), expectFieldFrame.end());
+  bits.insert(bits.end(), calcPadding(5) * CHAR_BIT, 0);
+
+  PushPromiseFrame frame{bits};
+
+  EXPECT_EQ(frame.length, 5);
+  EXPECT_EQ(frame.type, 5);
+  EXPECT_EQ(frame.paddedFlag, 1);
+  EXPECT_EQ(frame.endHeaderFlag, 1);
+  EXPECT_EQ(frame.streamIdentifier, 43);
+  EXPECT_EQ(frame.promiseStreamId, 55);
+  EXPECT_EQ(frame.fieldBlockFragment, expectFieldFrame);
+  EXPECT_EQ(frame.padding.size(), 3 * CHAR_BIT);
+}

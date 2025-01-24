@@ -23,7 +23,7 @@ inline void fillBinary(T input, std::vector<bit> &bits) {
   }
 }
 
-inline int calcPadding(const size_t payloadLength) {
+inline uint8_t calcPadding(const size_t payloadLength) {
   return (8 - (payloadLength % 8)) % 8;
 }
 

@@ -1,5 +1,4 @@
 #include "include/http2/frames.hh"
-#include <iostream>
 
 template <typename T>
 T calcSize(const std::vector<bit> &bits) {
@@ -126,13 +125,13 @@ PushPromiseFrame::PushPromiseFrame(const std::vector<bit> &bits) {
   streamIdentifier =
       calcSize<uint31>(std::vector<bit>(bits.begin() + 41, bits.begin() + 72));
 
-  size_t index = 73;
+  size_t index = 72;
 
   if (paddedFlag) {
     padLength = calcSize<uint8_t>(
         std::vector<bit>(bits.begin() + index, bits.begin() + index + 8));
-    padding = std::vector<uint8_t>(padLength, 0);
-    index += 9;
+    padding = std::vector<uint8_t>(padLength * CHAR_BIT, 0);
+    index += 8;
   }
 
   ++index;
@@ -142,8 +141,8 @@ PushPromiseFrame::PushPromiseFrame(const std::vector<bit> &bits) {
   index += 31;
 
   if (paddedFlag) {
-    fieldBlockFragment =
-        std::vector<bit>(bits.begin() + index, bits.end() - padLength);
+    fieldBlockFragment = std::vector<bit>(bits.begin() + index,
+                                          bits.end() - padLength * CHAR_BIT);
   } else {
     fieldBlockFragment = std::vector<bit>(bits.begin() + index, bits.end());
   }
