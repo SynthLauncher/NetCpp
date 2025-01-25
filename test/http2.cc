@@ -620,3 +620,29 @@ TEST(Http2, GoawayFrameWithData) {
   ASSERT_EQ(frame.additionalDebugData.size(), 9);
   EXPECT_EQ(frame.additionalDebugData, expectDebugData);
 }
+
+TEST(Http2, WindowUpdateFrame) {
+  std::vector<bit> bits;
+
+  // Length, Type
+  fillBinary<uint24>(4, bits);
+  fillBinary<uint8_t>(8, bits);
+
+  // Flag
+  bits.insert(bits.end(), 8, 0);
+
+  // Stream Identifier
+  bits.push_back(0);
+  fillBinary<uint31>(3, bits);
+
+  // Window Size Increment
+  bits.push_back(0);
+  fillBinary<uint31>(5235, bits);
+
+  WindowUpdateFrame frame{bits};
+
+  EXPECT_EQ(frame.length, 4);
+  EXPECT_EQ(frame.type, 8);
+  EXPECT_EQ(frame.streamIdentifier, 3);
+  EXPECT_EQ(frame.windowSizeIncrement, 5235);
+}
