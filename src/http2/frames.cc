@@ -1,4 +1,5 @@
 #include "include/http2/frames.hh"
+#include <climits>
 
 template <typename T>
 T calcSize(const std::vector<bit> &bits) {
@@ -40,6 +41,36 @@ DataFrame::DataFrame(const std::vector<bit> &bits) {
   }
 }
 
+std::vector<bit> DataFrame::toBits() {
+  std::vector<bit> bits;
+
+  length = data.size() / 8;
+
+  if (paddedFlag) {
+    padLength = calcPadding(data.size());
+    length += (8 + padLength * CHAR_BIT) / 8;
+  }
+
+  fillBinary<uint24>(length, bits);
+  bits.insert(bits.end(), 8, 0);
+
+  bits.insert(bits.end(), 4, 0);
+  bits.push_back(paddedFlag);
+  bits.insert(bits.end(), 2, 0);
+  bits.push_back(endStreamFlag);
+
+  bits.push_back(0);
+  fillBinary<uint31>(streamIdentifier, bits);
+
+  if (paddedFlag) {
+    fillBinary<uint8_t>(padLength, bits);
+  }
+  bits.insert(bits.end(), data.begin(), data.end());
+  bits.insert(bits.end(), padLength * CHAR_BIT, 0);
+
+  return bits;
+}
+
 HeaderFrame::HeaderFrame(const std::vector<bit> &bits) {
   length = calcSize<uint24>(std::vector<bit>(bits.begin(), bits.begin() + 24));
 
@@ -75,6 +106,50 @@ HeaderFrame::HeaderFrame(const std::vector<bit> &bits) {
   } else {
     fieldBlockFragment = std::vector<bit>(bits.begin() + index, bits.end());
   }
+}
+
+std::vector<bit> HeaderFrame::toBits() {
+  std::vector<bit> bits;
+
+  length = fieldBlockFragment.size() / 8;
+
+  if (paddedFlag) {
+    padLength = calcPadding(fieldBlockFragment.size());
+    length += (8 + padLength * CHAR_BIT) / 8;
+  }
+
+  if (priorityFlag) {
+    length += 6;
+  }
+
+  fillBinary<uint24>(length, bits);
+  fillBinary<uint8_t>(1, bits);
+
+  bits.insert(bits.end(), 2, 0);
+  bits.push_back(priorityFlag);
+  bits.push_back(0);
+  bits.push_back(paddedFlag);
+  bits.push_back(endHeaderFlag);
+  bits.push_back(0);
+  bits.push_back(endStreamFlag);
+
+  bits.push_back(0);
+  fillBinary<uint31>(streamIdentifier, bits);
+
+  if (paddedFlag) {
+    fillBinary<uint8_t>(padLength, bits);
+  }
+
+  if (priorityFlag) {
+    bits.push_back(exclusive);
+    fillBinary<uint31>(streamDependency, bits);
+    fillBinary<uint8_t>(weight, bits);
+  }
+
+  bits.insert(bits.end(), fieldBlockFragment.begin(), fieldBlockFragment.end());
+  bits.insert(bits.end(), padLength * CHAR_BIT, 0);
+
+  return bits;
 }
 
 PriorityFrame::PriorityFrame(const std::vector<bit> &bits) {

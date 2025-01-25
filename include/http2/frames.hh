@@ -3,7 +3,6 @@
 
 #include "include/utils/uint24.hh"
 #include "include/utils/uint31.hh"
-#include <array>
 #include <climits>
 #include <cmath>
 #include <cstdint>
@@ -12,6 +11,8 @@
 
 #define HTTP2_CONNECTION_PREFACE                                               \
   0x505249202a20485454502f322e300d0a0d0a534d0d0a0d0a
+
+#define BASIC_MAX_FRAME_SIZE 16384
 
 using bit = bool;
 
@@ -38,10 +39,11 @@ struct DataFrame {
 
   uint31 streamIdentifier;
 
-  uint8_t padLength;
+  uint8_t padLength = 0;
   std::vector<bit> data;
 
   DataFrame(const std::vector<bit> &bits);
+  std::vector<bit> toBits();
 };
 
 struct HeaderFrame {
@@ -54,13 +56,14 @@ struct HeaderFrame {
 
   uint31 streamIdentifier;
 
-  uint8_t padLength;
+  uint8_t padLength = 0;
   bit exclusive;
   uint31 streamDependency;
   uint8_t weight;
   std::vector<bit> fieldBlockFragment;
 
   HeaderFrame(const std::vector<bit> &bits);
+  std::vector<bit> toBits();
 };
 
 struct PriorityFrame {
@@ -73,6 +76,7 @@ struct PriorityFrame {
   uint8_t weight;
 
   PriorityFrame(const std::vector<bit> &bits);
+  std::vector<bit> toBits();
 };
 
 struct RstStreamFrame {
@@ -83,6 +87,7 @@ struct RstStreamFrame {
   uint32_t errorCode;
 
   RstStreamFrame(const std::vector<bit> &bits);
+  std::vector<bit> toBits();
 };
 
 struct Setting {
@@ -91,6 +96,7 @@ struct Setting {
 
   Setting(uint16_t identifier, uint32_t value)
       : identifier{identifier}, value{value} {}
+  std::vector<bit> toBits();
 };
 
 struct SettingFrame {
@@ -103,6 +109,7 @@ struct SettingFrame {
   std::vector<Setting> settings;
 
   SettingFrame(const std::vector<bit> &bits);
+  std::vector<bit> toBits();
 };
 
 struct PushPromiseFrame {
@@ -113,11 +120,12 @@ struct PushPromiseFrame {
 
   uint31 streamIdentifier;
 
-  uint8_t padLength;
+  uint8_t padLength = 0;
   uint31 promiseStreamId;
   std::vector<bit> fieldBlockFragment;
 
   PushPromiseFrame(const std::vector<bit> &bits);
+  std::vector<bit> toBits();
 };
 
 struct PingFrame {
@@ -130,6 +138,7 @@ struct PingFrame {
   uint64_t opaqueData;
 
   PingFrame(const std::vector<bit> &bits);
+  std::vector<bit> toBits();
 };
 
 struct GoawayFrame {
@@ -142,6 +151,7 @@ struct GoawayFrame {
   std::vector<bit> additionalDebugData;
 
   GoawayFrame(const std::vector<bit> &bits);
+  std::vector<bit> toBits();
 };
 
 struct WindowUpdateFrame {
@@ -152,6 +162,7 @@ struct WindowUpdateFrame {
   uint32_t windowSizeIncrement;
 
   WindowUpdateFrame(const std::vector<bit> &bits);
+  std::vector<bit> toBits();
 };
 
 struct ContinuationFrame {
@@ -164,6 +175,7 @@ struct ContinuationFrame {
   std::vector<bit> fieldBlockFragment;
 
   ContinuationFrame(const std::vector<bit> &bits);
+  std::vector<bit> toBits();
 };
 
 #endif // NETCPP_HTTP2_FRAMES_HH
