@@ -173,7 +173,7 @@ WindowUpdateFrame::WindowUpdateFrame(const std::vector<bit> &bits) {
 ContinuationFrame::ContinuationFrame(const std::vector<bit> &bits) {
   length = calcSize<uint24>(std::vector<bit>(bits.begin(), bits.begin() + 24));
 
-  endHeaderFlag = bits[38];
+  endHeaderFlag = bits[37];
 
   streamIdentifier =
       calcSize<uint31>(std::vector<bit>(bits.begin() + 41, bits.begin() + 72));

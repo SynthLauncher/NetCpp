@@ -646,3 +646,32 @@ TEST(Http2, WindowUpdateFrame) {
   EXPECT_EQ(frame.streamIdentifier, 3);
   EXPECT_EQ(frame.windowSizeIncrement, 5235);
 }
+
+TEST(Http2, ContinuationFrame) {
+  std::vector<bit> bits;
+  std::vector<bit> expectFieldFrame = {0, 1, 1, 0, 0, 1, 0, 1, 0};
+
+  // Length, Type
+  fillBinary<uint24>(4, bits);
+  fillBinary<uint8_t>(9, bits);
+
+  // Flag
+  bits.insert(bits.end(), 5, 0);
+  bits.push_back(1);
+  bits.insert(bits.end(), 2, 0);
+
+  // Stream Identifier
+  bits.push_back(0);
+  fillBinary<uint31>(62, bits);
+
+  // Field Block Fragment
+  bits.insert(bits.end(), expectFieldFrame.begin(), expectFieldFrame.end());
+
+  ContinuationFrame frame{bits};
+
+  EXPECT_EQ(frame.length, 4);
+  EXPECT_EQ(frame.type, 9);
+  EXPECT_EQ(frame.endHeaderFlag, 1);
+  EXPECT_EQ(frame.streamIdentifier, 62);
+  EXPECT_EQ(frame.fieldBlockFragment, expectFieldFrame);
+}
