@@ -32,14 +32,10 @@ T calcSize(const std::vector<bit> &bits);
 
 struct DataFrame {
   uint24 length;
-  const uint8_t type = 0x00;
 
-  const std::array<bit, 4> unusedFlag = {0, 0, 0, 0};
   bit paddedFlag;
-  const std::array<bit, 2> unusedFlag2 = {0, 0};
   bit endStreamFlag;
 
-  const bit reserved = 0;
   uint31 streamIdentifier;
 
   uint8_t padLength;
@@ -50,17 +46,12 @@ struct DataFrame {
 
 struct HeaderFrame {
   uint24 length;
-  const uint8_t type = 0x01;
 
-  const std::array<bit, 2> unusedFlag = {0, 0};
   bit priorityFlag;
-  const bit unusedFlag2 = 0;
   bit paddedFlag;
   bit endHeaderFlag;
-  const bit unusedFlag3 = 0;
   bit endStreamFlag;
 
-  const bit reserved = 0;
   uint31 streamIdentifier;
 
   uint8_t padLength;
@@ -74,11 +65,7 @@ struct HeaderFrame {
 
 struct PriorityFrame {
   const uint24 length = 5;
-  const uint8_t type = 0x02;
 
-  const std::array<bit, 8> unusedFlag = {0, 0, 0, 0, 0, 0, 0, 0};
-
-  const bit reserved = 0;
   uint31 streamIdentifier;
 
   bit exclusive;
@@ -90,11 +77,7 @@ struct PriorityFrame {
 
 struct RstStreamFrame {
   const uint24 length = 0x04;
-  const uint8_t type = 0x03;
 
-  const std::array<bit, 8> unusedFlag = {0, 0, 0, 0, 0, 0, 0, 0};
-
-  const bit reserved = 0;
   uint31 streamIdentifier;
 
   uint32_t errorCode;
@@ -112,12 +95,9 @@ struct Setting {
 
 struct SettingFrame {
   uint24 length;
-  const uint8_t type = 0x04;
 
-  const std::array<bit, 7> unusedFlag = {0, 0, 0, 0, 0, 0, 0};
   bit ackFlag;
 
-  const bit reserved = 0;
   const uint31 streamIdentifier = 0;
 
   std::vector<Setting> settings;
@@ -127,18 +107,13 @@ struct SettingFrame {
 
 struct PushPromiseFrame {
   uint24 length;
-  const uint8_t type = 0x05;
 
-  const std::array<bit, 4> unusedFlag = {0, 0, 0, 0};
   bit paddedFlag;
   bit endHeaderFlag;
-  const std::array<bit, 2> unusedFlag2 = {0, 0};
 
-  const bit reserved = 0;
   uint31 streamIdentifier;
 
   uint8_t padLength;
-  const bit reserved2 = 0;
   uint31 promiseStreamId;
   std::vector<bit> fieldBlockFragment;
 
@@ -148,11 +123,8 @@ struct PushPromiseFrame {
 struct PingFrame {
   uint24 length = 0x08;
 
-  const uint8_t type = 0x06;
-  const std::array<bit, 7> unusedFlag = {0, 0, 0, 0, 0, 0, 0};
   bit ackFlag;
 
-  const bit reserved = 0;
   const uint31 streamIdentifier = 0;
 
   uint64_t opaqueData;
@@ -162,14 +134,9 @@ struct PingFrame {
 
 struct GoawayFrame {
   uint24 length;
-  const uint8_t type = 0x07;
 
-  const std::array<bit, 8> unusedFlag = {0, 0, 0, 0, 0, 0, 0, 0};
-
-  const bit reserved = 0;
   const uint31 streamIdentifier = 0;
 
-  const bit reserved2 = 0;
   uint31 lastStreamId;
   uint32_t errorCode;
   std::vector<bit> additionalDebugData;
@@ -179,14 +146,9 @@ struct GoawayFrame {
 
 struct WindowUpdateFrame {
   const uint24 length = 0x04;
-  const uint8_t type = 0x08;
 
-  const std::array<bit, 8> unusedFlag = {0, 0, 0, 0, 0, 0, 0, 0};
-
-  const bit reserved = 0;
   uint31 streamIdentifier;
 
-  const bit reserved2 = 0;
   uint32_t windowSizeIncrement;
 
   WindowUpdateFrame(const std::vector<bit> &bits);
@@ -194,13 +156,9 @@ struct WindowUpdateFrame {
 
 struct ContinuationFrame {
   uint24 length;
-  const uint8_t type = 0x09;
 
-  const std::array<bit, 5> unusedFlag = {0, 0, 0, 0, 0};
   bit endHeaderFlag;
-  const std::array<bit, 2> unusedFlag2 = {0, 0};
 
-  const bit reserved = 0;
   uint31 streamIdentifier;
 
   std::vector<bit> fieldBlockFragment;

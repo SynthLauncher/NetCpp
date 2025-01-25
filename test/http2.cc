@@ -142,7 +142,6 @@ TEST(Http2, DataFrameParseWithoutPadding) {
   DataFrame frame{bits};
 
   EXPECT_EQ(frame.length, 1);
-  EXPECT_EQ(frame.type, 0);
   EXPECT_EQ(frame.paddedFlag, 0);
   EXPECT_EQ(frame.endStreamFlag, 1);
   EXPECT_EQ(frame.streamIdentifier, 3);
@@ -175,7 +174,6 @@ TEST(Http2, DataFrameParseWithPadding) {
   DataFrame frame{bits};
 
   EXPECT_EQ(frame.length, 56);
-  EXPECT_EQ(frame.type, 0);
   EXPECT_EQ(frame.paddedFlag, 1);
   EXPECT_EQ(frame.endStreamFlag, 1);
   EXPECT_EQ(frame.streamIdentifier, 3);
@@ -210,7 +208,6 @@ TEST(Http2, HeaderFrameWithoutPaddingWithoutPriority) {
   HeaderFrame frame{bits};
 
   EXPECT_EQ(frame.length, 8);
-  EXPECT_EQ(frame.type, 1);
   EXPECT_EQ(frame.priorityFlag, 0);
   EXPECT_EQ(frame.paddedFlag, 0);
   EXPECT_EQ(frame.endHeaderFlag, 1);
@@ -248,7 +245,6 @@ TEST(Http2, HeaderFrameWithPaddingWithoutPriority) {
   HeaderFrame frame{bits};
 
   EXPECT_EQ(frame.length, 8);
-  EXPECT_EQ(frame.type, 1);
   EXPECT_EQ(frame.priorityFlag, 0);
   EXPECT_EQ(frame.paddedFlag, 1);
   EXPECT_EQ(frame.endHeaderFlag, 1);
@@ -288,7 +284,6 @@ TEST(Http2, HeaderFrameWithoutPaddingWithPriority) {
   HeaderFrame frame{bits};
 
   EXPECT_EQ(frame.length, 8);
-  EXPECT_EQ(frame.type, 1);
   EXPECT_EQ(frame.priorityFlag, 1);
   EXPECT_EQ(frame.paddedFlag, 0);
   EXPECT_EQ(frame.endHeaderFlag, 1);
@@ -332,7 +327,6 @@ TEST(Http2, HeaderFrameWithPaddingWithPriority) {
   HeaderFrame frame{bits};
 
   EXPECT_EQ(frame.length, 8);
-  EXPECT_EQ(frame.type, 1);
   EXPECT_EQ(frame.priorityFlag, 1);
   EXPECT_EQ(frame.paddedFlag, 1);
   EXPECT_EQ(frame.endHeaderFlag, 1);
@@ -367,7 +361,6 @@ TEST(Http2, PriorityFrame) {
   PriorityFrame frame{bits};
 
   EXPECT_EQ(frame.length, 5);
-  EXPECT_EQ(frame.type, 2);
   EXPECT_EQ(frame.streamIdentifier, 4);
   EXPECT_EQ(frame.exclusive, 0);
   EXPECT_EQ(frame.streamDependency, 43);
@@ -394,7 +387,6 @@ TEST(Http2, RstStreamFrame) {
   RstStreamFrame frame{bits};
 
   EXPECT_EQ(frame.length, 4);
-  EXPECT_EQ(frame.type, 3);
   EXPECT_EQ(frame.streamIdentifier, 5);
   EXPECT_EQ(frame.errorCode, 0);
 }
@@ -421,7 +413,6 @@ TEST(Http2, SettingsFrameWithSingleSetting) {
   SettingFrame frame{bits};
 
   EXPECT_EQ(frame.length, 6);
-  EXPECT_EQ(frame.type, 4);
   EXPECT_EQ(frame.ackFlag, 1);
   EXPECT_EQ(frame.streamIdentifier, 0);
   EXPECT_EQ(frame.settings[0].identifier, 2);
@@ -453,7 +444,6 @@ TEST(Http2, SettingsFrameWithMultipleSetting) {
   SettingFrame frame{bits};
 
   EXPECT_EQ(frame.length, 6);
-  EXPECT_EQ(frame.type, 4);
   EXPECT_EQ(frame.ackFlag, 1);
   EXPECT_EQ(frame.streamIdentifier, 0);
   ASSERT_EQ(frame.settings.size(), 2);
@@ -489,7 +479,6 @@ TEST(Http2, PushPromiseWithoutPadding) {
   PushPromiseFrame frame{bits};
 
   EXPECT_EQ(frame.length, 5);
-  EXPECT_EQ(frame.type, 5);
   EXPECT_EQ(frame.paddedFlag, 0);
   EXPECT_EQ(frame.endHeaderFlag, 1);
   EXPECT_EQ(frame.streamIdentifier, 43);
@@ -525,7 +514,6 @@ TEST(Http2, PushPromiseWithPadding) {
   PushPromiseFrame frame{bits};
 
   EXPECT_EQ(frame.length, 5);
-  EXPECT_EQ(frame.type, 5);
   EXPECT_EQ(frame.paddedFlag, 1);
   EXPECT_EQ(frame.endHeaderFlag, 1);
   EXPECT_EQ(frame.streamIdentifier, 43);
@@ -554,7 +542,6 @@ TEST(Http2, PingFrame) {
   PingFrame frame{bits};
 
   EXPECT_EQ(frame.length, 8);
-  EXPECT_EQ(frame.type, 6);
   EXPECT_EQ(frame.ackFlag, 1);
   EXPECT_EQ(frame.streamIdentifier, 0);
   EXPECT_EQ(frame.opaqueData, 0);
@@ -582,7 +569,6 @@ TEST(Http2, GoawayFrameWithoutData) {
   GoawayFrame frame{bits};
 
   EXPECT_EQ(frame.length, 3);
-  EXPECT_EQ(frame.type, 7);
   EXPECT_EQ(frame.streamIdentifier, 0);
   EXPECT_EQ(frame.lastStreamId, 4);
   EXPECT_EQ(frame.errorCode, 0);
@@ -613,7 +599,6 @@ TEST(Http2, GoawayFrameWithData) {
   GoawayFrame frame{bits};
 
   EXPECT_EQ(frame.length, 3);
-  EXPECT_EQ(frame.type, 7);
   EXPECT_EQ(frame.streamIdentifier, 0);
   EXPECT_EQ(frame.lastStreamId, 4);
   EXPECT_EQ(frame.errorCode, 0);
@@ -642,7 +627,6 @@ TEST(Http2, WindowUpdateFrame) {
   WindowUpdateFrame frame{bits};
 
   EXPECT_EQ(frame.length, 4);
-  EXPECT_EQ(frame.type, 8);
   EXPECT_EQ(frame.streamIdentifier, 3);
   EXPECT_EQ(frame.windowSizeIncrement, 5235);
 }
@@ -670,7 +654,6 @@ TEST(Http2, ContinuationFrame) {
   ContinuationFrame frame{bits};
 
   EXPECT_EQ(frame.length, 4);
-  EXPECT_EQ(frame.type, 9);
   EXPECT_EQ(frame.endHeaderFlag, 1);
   EXPECT_EQ(frame.streamIdentifier, 62);
   EXPECT_EQ(frame.fieldBlockFragment, expectFieldFrame);
