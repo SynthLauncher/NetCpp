@@ -1,5 +1,4 @@
 #include "include/http2/frames.hh"
-#include <climits>
 
 template <typename T>
 T calcSize(const std::vector<bit> &bits) {
@@ -163,11 +162,45 @@ PriorityFrame::PriorityFrame(const std::vector<bit> &bits) {
   weight = calcSize<uint8_t>(std::vector<bit>(bits.end() - 8, bits.end()));
 }
 
+std::vector<bit> PriorityFrame::toBits() {
+  std::vector<bit> bits;
+
+  fillBinary<uint24>(5, bits);
+  fillBinary<uint8_t>(2, bits);
+
+  bits.insert(bits.end(), 8, 0);
+
+  bits.push_back(0);
+  fillBinary<uint31>(streamIdentifier, bits);
+
+  bits.push_back(exclusive);
+  fillBinary<uint31>(streamDependency, bits);
+  fillBinary<uint8_t>(weight, bits);
+
+  return bits;
+}
+
 RstStreamFrame::RstStreamFrame(const std::vector<bit> &bits) {
   streamIdentifier =
       calcSize<uint31>(std::vector<bit>(bits.begin() + 41, bits.begin() + 72));
 
   errorCode = calcSize<uint32_t>(std::vector<bit>(bits.end() - 32, bits.end()));
+}
+
+std::vector<bit> RstStreamFrame::toBits() {
+  std::vector<bit> bits;
+
+  fillBinary<uint24>(4, bits);
+  fillBinary<uint8_t>(3, bits);
+
+  bits.insert(bits.end(), 8, 0);
+
+  bits.push_back(0);
+  fillBinary<uint31>(streamIdentifier, bits);
+
+  fillBinary<uint32_t>(errorCode, bits);
+
+  return bits;
 }
 
 SettingFrame::SettingFrame(const std::vector<bit> &bits) {
@@ -187,6 +220,31 @@ SettingFrame::SettingFrame(const std::vector<bit> &bits) {
 
     settings.push_back(Setting(identifier, value));
   }
+}
+
+void Setting::toBits(std::vector<bit> &bits) {
+  fillBinary<uint16_t>(identifier, bits);
+  fillBinary<uint32_t>(value, bits);
+}
+
+std::vector<bit> SettingFrame::toBits() {
+  std::vector<bit> bits;
+
+  length = settings.size() * 48 / 8;
+
+  fillBinary<uint24>(length, bits);
+  fillBinary<uint8_t>(4, bits);
+
+  bits.insert(bits.end(), 7, 0);
+  bits.push_back(ackFlag);
+
+  bits.insert(bits.end(), 32, 0);
+
+  for (auto &setting : settings) {
+    setting.toBits(bits);
+  }
+
+  return bits;
 }
 
 PushPromiseFrame::PushPromiseFrame(const std::vector<bit> &bits) {
@@ -220,11 +278,60 @@ PushPromiseFrame::PushPromiseFrame(const std::vector<bit> &bits) {
   }
 }
 
+std::vector<bit> PushPromiseFrame::toBits() {
+  std::vector<bit> bits;
+
+  length = fieldBlockFragment.size() / 8;
+
+  if (paddedFlag) {
+    padLength = calcPadding(fieldBlockFragment.size());
+    length += (8 + padLength * CHAR_BIT) / 8;
+  }
+
+  fillBinary<uint24>(length, bits);
+  fillBinary<uint8_t>(5, bits);
+
+  bits.insert(bits.end(), 4, 0);
+  bits.push_back(paddedFlag);
+  bits.push_back(endHeaderFlag);
+  bits.insert(bits.end(), 2, 0);
+
+  bits.push_back(0);
+  fillBinary<uint31>(streamIdentifier, bits);
+
+  if (paddedFlag) {
+    fillBinary<uint8_t>(padLength, bits);
+  }
+
+  bits.push_back(0);
+  fillBinary<uint31>(promiseStreamId, bits);
+  bits.insert(bits.end(), fieldBlockFragment.begin(), fieldBlockFragment.end());
+  bits.insert(bits.end(), padLength * CHAR_BIT, 0);
+
+  return bits;
+}
+
 PingFrame::PingFrame(const std::vector<bit> &bits) {
   ackFlag = bits[39];
 
   opaqueData =
       calcSize<uint64_t>(std::vector<bit>(bits.end() - 64, bits.end()));
+}
+
+std::vector<bit> PingFrame::toBits() {
+  std::vector<bit> bits;
+
+  fillBinary<uint24>(8, bits);
+  fillBinary<uint8_t>(6, bits);
+
+  bits.insert(bits.end(), 7, 0);
+  bits.push_back(ackFlag);
+
+  bits.insert(bits.end(), 32, 0);
+
+  fillBinary<uint64_t>(opaqueData, bits);
+
+  return bits;
 }
 
 GoawayFrame::GoawayFrame(const std::vector<bit> &bits) {
@@ -237,12 +344,50 @@ GoawayFrame::GoawayFrame(const std::vector<bit> &bits) {
   additionalDebugData = std::vector<bit>(bits.begin() + 136, bits.end());
 }
 
+std::vector<bit> GoawayFrame::toBits() {
+  std::vector<bit> bits;
+
+  length = 8 + (additionalDebugData.size() / 8);
+
+  fillBinary<uint24>(length, bits);
+  fillBinary<uint8_t>(7, bits);
+
+  bits.insert(bits.end(), 8, 0);
+
+  bits.insert(bits.end(), 32, 0);
+
+  bits.push_back(0);
+  fillBinary<uint31>(lastStreamId, bits);
+  fillBinary<uint32_t>(errorCode, bits);
+  bits.insert(bits.end(), additionalDebugData.begin(),
+              additionalDebugData.end());
+
+  return bits;
+}
+
 WindowUpdateFrame::WindowUpdateFrame(const std::vector<bit> &bits) {
   streamIdentifier =
       calcSize<uint31>(std::vector<bit>(bits.begin() + 41, bits.begin() + 72));
 
   windowSizeIncrement =
       calcSize<uint32_t>(std::vector<bit>(bits.end() - 32, bits.end()));
+}
+
+std::vector<bit> WindowUpdateFrame::toBits() {
+  std::vector<bit> bits;
+
+  fillBinary<uint24>(4, bits);
+  fillBinary<uint8_t>(8, bits);
+
+  bits.insert(bits.end(), 8, 0);
+
+  bits.push_back(0);
+  fillBinary<uint31>(streamIdentifier, bits);
+
+  bits.push_back(0);
+  fillBinary<uint31>(windowSizeIncrement, bits);
+
+  return bits;
 }
 
 ContinuationFrame::ContinuationFrame(const std::vector<bit> &bits) {
@@ -254,4 +399,24 @@ ContinuationFrame::ContinuationFrame(const std::vector<bit> &bits) {
       calcSize<uint31>(std::vector<bit>(bits.begin() + 41, bits.begin() + 72));
 
   fieldBlockFragment = std::vector<bit>(bits.begin() + 72, bits.end());
+}
+
+std::vector<bit> ContinuationFrame::toBits() {
+  std::vector<bit> bits;
+
+  length = fieldBlockFragment.size() / 8;
+
+  fillBinary<uint24>(length, bits);
+  fillBinary<uint8_t>(9, bits);
+
+  bits.insert(bits.end(), 5, 0);
+  bits.push_back(endHeaderFlag);
+  bits.insert(bits.end(), 2, 0);
+
+  bits.push_back(0);
+  fillBinary<uint31>(streamIdentifier, bits);
+
+  bits.insert(bits.end(), fieldBlockFragment.begin(), fieldBlockFragment.end());
+
+  return bits;
 }

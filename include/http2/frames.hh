@@ -96,7 +96,7 @@ struct Setting {
 
   Setting(uint16_t identifier, uint32_t value)
       : identifier{identifier}, value{value} {}
-  std::vector<bit> toBits();
+  void toBits(std::vector<bit> &bits);
 };
 
 struct SettingFrame {
