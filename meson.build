@@ -7,6 +7,7 @@ src = [
   'src/http2/request.cc',
   'src/http2/response.cc',
   'src/http2/frames.cc',
+  'src/http2/hpack.cc',
   'src/utils/http_version.cc',
   'src/utils/method.cc',
   'src/utils/status.cc',
@@ -18,7 +19,8 @@ src = [
 test_src = [
   'test/test.cc',
   'test/core.cc',
-  'test/http2.cc'
+  'test/http2.cc',
+  'test/hpack.cc'
 ]
 
 # Test dependencies
