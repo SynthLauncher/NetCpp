@@ -25,7 +25,7 @@ int calcBits(const std::vector<bit> &bits);
 
 std::string bitsToString(const std::vector<bit> &bits);
 
-void parseHeader(const std::vector<bit> &bits, ClientHeader &header);
+void decodeHeader(const std::vector<bit> &bits, ClientHeader &header);
 
 Table parseHeaderIncrementalIndexing(size_t &index,
                                      const std::vector<bit> &bits,

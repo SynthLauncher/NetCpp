@@ -103,7 +103,7 @@ TEST(Hpack, MultipleHeaderType) {
       0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0};
 
   ClientHeader clientHeader;
-  parseHeader(bits, clientHeader);
+  decodeHeader(bits, clientHeader);
 
   ASSERT_EQ(clientHeader.lastIndex, 62);
   ASSERT_EQ(clientHeader.headerList.size(), 2);

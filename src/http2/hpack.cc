@@ -26,7 +26,7 @@ std::string bitsToString(const std::vector<bit> &bits) {
   return result;
 }
 
-void parseHeader(const std::vector<bit> &bits, ClientHeader &header) {
+void decodeHeader(const std::vector<bit> &bits, ClientHeader &header) {
   size_t index = 0;
 
   while (index < bits.size()) {
