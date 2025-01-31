@@ -30,18 +30,21 @@ void parseHeader(const std::vector<bit> &bits, ClientHeader &header) {
   size_t index = 0;
 
   while (index < bits.size()) {
-    if (bits[0] == 1) {
+    if (bits[index] == 1) {
+      ++index;
       int staticIndex =
-          calcBits(std::vector(bits.begin() + 1, bits.begin() + 9));
+          calcBits(std::vector(bits.begin() + index, bits.begin() + index + 7));
+      index += 7;
 
       if (staticIndex == 0 || staticIndex > 61) {
         // TODO: HANDLE ERROR
       }
 
-      header.headerList.push_back(staticTable[index]);
+      header.headerList.push_back(staticTable[staticIndex - 1]);
     } else if (std::vector<bit>(bits.begin() + index,
                                 bits.begin() + index + 2) ==
                LITERAL_INCREMENTAL_INDEXING_PREFIX) {
+      index += 2;
 
       Table table =
           parseHeaderIncrementalIndexing(index, bits, ++header.lastIndex);
@@ -52,6 +55,7 @@ void parseHeader(const std::vector<bit> &bits, ClientHeader &header) {
                                 bits.begin() + index + 4) ==
                LITERAL_WITHOUT_INDEXING_PREFIX) {
 
+      index += 4;
       Table table = parseHeaderWithoutIndex(index, bits);
 
       header.withoutIndexed.push_back(table);
@@ -60,9 +64,12 @@ void parseHeader(const std::vector<bit> &bits, ClientHeader &header) {
                                 bits.begin() + index + 4) ==
                LITERAL_NEVER_INDEXING_PREFIX) {
 
+      index += 4;
       Table table = parseHeaderWithoutIndex(index, bits);
 
       header.neverIndexed.push_back(table);
+    } else {
+      // TODO: HANDLE ERROR
     }
   }
 }
@@ -105,6 +112,8 @@ Table parseHeaderIncrementalIndexing(size_t &index,
 
     table.headerValue = bitsToString(std::vector<bit>(
         bits.begin() + index, bits.begin() + index + nameLength * CHAR_BIT));
+
+    index += nameLength * CHAR_BIT;
   }
 
   return table;
@@ -145,6 +154,8 @@ Table parseHeaderWithoutIndex(size_t &index, const std::vector<bit> &bits) {
 
     table.headerValue = bitsToString(std::vector<bit>(
         bits.begin() + index, bits.begin() + index + nameLength * CHAR_BIT));
+
+    index += nameLength * CHAR_BIT;
   }
 
   return table;
